@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+    {% block title %}Profil de {{ app.user.username }}{% endblock %}
+    {% block body %}
+        
+    
+
+    <profil>
+            <h2>{{ app.user.username }}</h2>
+            {% if app.user.coach == true %}
+                <label style="color:rgba(255, 0, 0, 0.589)">{{ app.user.username }} est Coach</label><br>
+                {% endif %}
+            <div class="metadata">Membre depuis le {{  app.user.createdAt | date('d/m/Y') }} à {{  app.user.createdAt | date('H:i') }}</div><br>
+            <div class="content">
+                <label>Votre adresse email :</label>
+                <label>{{ app.user.email }}</label><br>
+            </div><br>
+        </profil>
+        <a href="{{ path('security_editprofil') }}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Editer mon profil</a><br><br>
+
+    {% endblock %}
