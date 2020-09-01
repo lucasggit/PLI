@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Entity\Messages;
+use App\Entity\Produits;
 use App\Form\UserType;
 use App\Manager\manager;
 use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping\Id;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -110,8 +112,26 @@ class SecurityController extends AbstractController
     /**
      * @Route("/produits", name="security_produits")
      */
-    public function produits()
+    public function produits(Request $request)
     {
-        return $this->render('security/produits.html.twig');
+        $user=$this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('VIEW', $user);
+
+        $repository = $this->getDoctrine()->getRepository(Produits::class);
+        $coach= $repository->findOneBy(['id' => $user->getId() ]);
+        
+        $produit = new Produits();
+        $form = $this->createForm(ProduitsType::class, $produit);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            // $manager->addProduit($produit, $coach);
+                return $this->redirectToRoute('security_produits');
+        }
+
+        return $this->render('security/produits.html.twig',[
+            'form' => $form->createView()
+        ]);
+        
     }
 }

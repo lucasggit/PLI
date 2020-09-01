@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -56,6 +58,16 @@ class User implements UserInterface
      * @ORM\Column(type="boolean")
      */
     private $coach;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Produits", mappedBy="Coach")
+     */
+    private $produit;
+
+    public function __construct()
+    {
+        $this->produit = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -139,6 +151,37 @@ class User implements UserInterface
     public function setCoach(bool $coach): self
     {
         $this->coach = $coach;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Produits[]
+     */
+    public function getProduit(): Collection
+    {
+        return $this->produit;
+    }
+
+    public function addProduit(Produits $produit): self
+    {
+        if (!$this->produit->contains($produit)) {
+            $this->produit[] = $produit;
+            $produit->setCoach($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduit(Produits $produit): self
+    {
+        if ($this->produit->contains($produit)) {
+            $this->produit->removeElement($produit);
+            // set the owning side to null (unless already changed)
+            if ($produit->getCoach() === $this) {
+                $produit->setCoach(null);
+            }
+        }
 
         return $this;
     }

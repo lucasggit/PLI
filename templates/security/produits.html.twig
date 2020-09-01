@@ -21,6 +21,47 @@
 </style>
 <div class="col-md-5 p-lg-5 mx-auto my-5">
   <h1 class="display-4 font-weight-normal">Les produits</h1>
+  {% if app.user.coach == true %}
+  {{ form_start(form) }}
+  <p class="lead font-weight-normal">Personnalisez vos produits</p>
+</div>
+<div class="row">
+  <div class="col" style="background-color: gray; height: 300px;">
+    {{ form_row(form.image1, {
+      'label': 'Image 1'
+    }) }}
+  </div>
+  <div class="col-8" style="background-color: bisque;">
+    {{ form_row(form.text1, {
+    'label': 'Description...'
+    }) }}
+    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+  </div>
+  <div class="col" style="background-color: gray; height: 300px;">
+    {{ form_row(form.image2, {
+      'label': 'Image 2'
+    }) }}
+  </div>
+  <div class="col-8" style="background-color: bisque;">
+    {{ form_row(form.text2, {
+    'label': 'Description...'
+    }) }}
+    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+  </div>
+  <div class="col" style="background-color: gray; height: 300px;">
+    {{ form_row(form.image3, {
+      'label': 'Image 3'
+    }) }}
+  </div>
+  <div class="col-8" style="background-color: bisque;">
+    {{ form_row(form.text3, {
+    'label': 'Description...'
+    }) }}
+    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    {{ form_end(form) }}
+  </div>
+</div>
+{% else %}
   <p class="lead font-weight-normal">Les articles proposés par ton coach </p>
 </div>
 <div class="row">
@@ -34,4 +75,5 @@
     <div class="shadow-sm p-3 mb-5 bg-white rounded" style="margin-top: 15px;">Small shadow</div>
   </div>
 </div>
+{% endif %}
 {% endblock %}
