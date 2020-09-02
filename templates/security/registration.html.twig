@@ -31,12 +31,12 @@
 
 
     {{ form_start(form, {'class': 'form-signin'}) }}
-
+    {{ form_errors(form) }}
     {{ form_row(form.username, {'label': 'Nom d\'utilisateur', 'attr':{'placeholder': 'Entrer un username...', 'class': 'form-control'}}) }}
     {{ form_row(form.email, {'label': 'Adresse email', 'attr':{'placeholder': 'Entrer une adresse mail...', 'class': 'form-control'}}) }}
     {{ form_row(form.password, {'label': 'Mot de passe', 'attr':{'placeholder': 'Entrer un mot de passe...', 'class': 'form-control'}}) }}
     {{ form_row(form.confirm_password, {'label': 'Confirmer le mot de passe', 'attr':{'placeholder': 'Resaisir le mot de passe...', 'class': 'form-control'}}) }}
-    {{ form_row(form.coach, {'label': 'Êtes-vous coach ?', 'attr':{'class': 'form-control'}}) }}
+    {{ form_row(form.Iscoach, {'label': 'Êtes-vous coach ?', 'attr':{'class': 'form-control'}}) }}
     <button class="btn btn-lg btn-primary btn-block" style="margin-top: 25px; background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);" type="submit">Inscription</button>
     <p class="mt-5 mb-3 text-muted">&copy; My e-Coach - 2020</p>
     {{ form_end(form) }}

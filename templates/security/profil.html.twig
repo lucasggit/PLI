@@ -6,15 +6,51 @@
 
     <profil>
             <h2>{{ app.user.username }}</h2>
-            {% if app.user.coach == true %}
-                <label style="color:rgba(255, 0, 0, 0.589)">{{ app.user.username }} est Coach</label><br>
+            {% if app.user.Iscoach == true %}
+                <label><strong>Vous êtes un Coach</strong></label><br>
                 {% endif %}
             <div class="metadata">Membre depuis le {{  app.user.createdAt | date('d/m/Y') }} à {{  app.user.createdAt | date('H:i') }}</div><br>
             <div class="content">
                 <label>Votre adresse email :</label>
-                <label>{{ app.user.email }}</label><br>
+                <label><strong>{{ app.user.email }}</strong></label><br>
+                {% if app.user.Iscoach == true %}
+                {# <label>Votre clef de lien :</label>
+                <label>{{ app.user.link }}</label><br>
+                <label>Cette clef est personnelle. Vous pouvez fournir cette clef à votre coach pour vous lier.</label><br>#}
+                {{ form_start(form) }} 
+
+                {{ form_row(form.Client, {'label': 'Entrez la clef d\'un client ici :', 'attr':{'class': 'form-control'}}) }}
+                
+                <button class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);" type="submit">Ajouter un Client</button>
+                {{ form_end(form) }}
+                {% else %}
+                <label>Votre clef de lien :</label>
+                <label><strong>{{ app.user.link }}</strong></label><br>
+                <label>(Cette clef est personnelle. Vous pouvez fournir cette clef à votre coach pour vous lier.)</label><br>
+                {% endif %}
+                
             </div><br>
         </profil>
         <a href="{{ path('security_editprofil') }}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Editer mon profil</a><br><br>
-
+        {% if app.user.Iscoach == true %}
+        <div>
+            <label>Voici vos clients :</label><br>
+            {% for cl in clients %}
+            {% for us in users %}
+            {% if us.id == cl.Client %}
+            <label><strong>{{ us.username }}</strong></label><br>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <label>Voici votre Coach :</label><br>
+            {% for co in Thecoach %}
+            {% for us in users %}
+            {% if us.id == co.Coach %}
+            <label><strong>{{ us.username }}</strong></label><br>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+        {% endif %}
     {% endblock %}

@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class EcoachController extends AbstractController
 {
     /**
-     * @Route("/", name="ecoach")
+     * @Route("/", name="index")
      */
     public function index()
     {

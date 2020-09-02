@@ -57,16 +57,23 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="boolean")
      */
-    private $coach;
+    private $Iscoach;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Produits", mappedBy="Coach")
      */
     private $produit;
 
+    /**
+     * @ORM\Column(type="string", length=16)
+     */
+    private $link;
+
     public function __construct()
     {
         $this->produit = new ArrayCollection();
+        $this->Client = new ArrayCollection();
+        $this->Coach = new ArrayCollection();
     }
 
 
@@ -143,14 +150,14 @@ class User implements UserInterface
         return $this->username;
     }
 
-    public function getCoach(): ?bool
+    public function getIsCoach(): ?bool
     {
-        return $this->coach;
+        return $this->Iscoach;
     }
 
-    public function setCoach(bool $coach): self
+    public function setIsCoach(bool $Iscoach): self
     {
-        $this->coach = $coach;
+        $this->Iscoach = $Iscoach;
 
         return $this;
     }
@@ -185,4 +192,19 @@ class User implements UserInterface
 
         return $this;
     }
+
+
+    public function getLink(): ?string
+    {
+        return $this->link;
+    }
+
+    public function setLink(string $link): self
+    {
+        $this->link = $link;
+
+        return $this;
+    }
+
+
 }

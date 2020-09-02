@@ -19,13 +19,13 @@ class UserType extends AbstractType
             ->add('password',  PasswordType::class)
             ->add('confirm_password',  PasswordType::class)
             ->add('username')
-            ->add('coach', ChoiceType::class, [
+            ->add('link')
+            ->add('Iscoach', ChoiceType::class, [
                 'choices'  => [
                     'Non' => false,
                     'Oui' => true,
-                    
-                ],
-            ]);
+                    ] 
+                ],);
     }
 
     public function configureOptions(OptionsResolver $resolver)
