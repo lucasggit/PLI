@@ -5,18 +5,17 @@ namespace App\Controller;
 use App\Entity\Clientele;
 use App\Entity\User;
 use App\Entity\Produits;
+use App\Entity\Images;
 use App\Form\UserType;
 use App\Manager\Manager;
 use App\Form\ProduitsType;
-use App\Form\ClienteleType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Intl\Scripts;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-
 
 class SecurityController extends AbstractController
 {
@@ -136,6 +135,34 @@ class SecurityController extends AbstractController
             'user' => $user
         ]);
     }
+
+    /**
+    * @Route("/profil/delete_clientele/{int}", name="security_Deleclientele")
+    */
+    public function delete_clientele(int $int, Manager $manager)
+    {
+        $user=$this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('EDIT', $user);
+        
+        $Clientrepository = $this->getDoctrine()->getRepository(Clientele::class);
+        $id = $user->getId();
+
+        $Userrepository = $this->getDoctrine()->getRepository(User::class);
+        $User = $Userrepository->findOneBy(['id' => $int]);
+        if ($user->getIsCoach() == 1) {
+            $clientele = $Clientrepository->findOneBy([
+                'Coach' => $id,
+                'Client' => $User,
+            ]);
+        } else {
+            $clientele = $Clientrepository->findOneBy([
+                'Coach' => $User,
+                'Client' => $id,
+            ]);
+        }
+        $manager->deleteClientele($clientele);
+        return $this->redirectToRoute('security_profil');
+    }
     
     /**
      * @Route("/messages", name="security_messages")
@@ -177,22 +204,142 @@ class SecurityController extends AbstractController
         } else {
             $Produits_client = $Prodrepository->findBy(['Coach' => $monCoach->getCoach()]);
         }
-        
+        $Imarepository = $this->getDoctrine()->getRepository(Images::class);
         $produits = $Prodrepository->findBy(['Coach' => $coach]);
         $produit = new Produits();
         $form = $this->createForm(ProduitsType::class, $produit);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $manager->addProduit($produit, $user);
+            $image = $form->get('image')->getData();
+            
+            if (!empty($image)) {
+                // On boucle sur les images
+                // On génère un nouveau nom de fichier
+                $fichier = md5(uniqid()).'.'.$image->guessExtension();
+                
+                // On copie le fichier dans le dossier uploads
+                $image->move(
+                    $this->getParameter('images_directory'),
+                    $fichier
+                );
+            } else {
+                $fichier = "";
+            }
+            
+            // On crée l'image dans la base de données
+            $img = new Images();
+            $img->setName($fichier);
+            $manager->addProduit($produit, $user, $img);
             return $this->redirectToRoute('security_produits');
         }
+        $images = $Imarepository->findAll();
 
         return $this->render('security/produits.html.twig', [
             'form' => $form->createView(),
             'produits' => $produits,
+            'images' => $images,
             'Produits_client' => $Produits_client,
         ]);
         
     }
+
+    /**
+    * @Route("/produits/{int}/delete", name="security_Deleproduit")
+    */
+    public function delete_produit(int $int, Manager $manager)
+    {
+        $user=$this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('EDIT', $user);
+        $produit = $this->getDoctrine()
+                ->getRepository(Produits::class)
+                ->find($int);
+        
+        // On récupère le nom de l'image
+        $image = $produit->getImage();
+        $nom = $image->getName();
+        if ($nom != "") {
+            unlink($this->getParameter('images_directory').'/'.$nom);
+            // On génère un nouveau nom de fichier
+            $manager->deleteProduit($produit);
+            return $this->redirectToRoute('security_produits');
+        } else {
+            $manager->deleteProduit($produit);
+            return $this->redirectToRoute('security_produits');
+        }
+    }
+
+    /**
+    * @Route("/produits/{int}/edit", name="security_Editproduit")
+    */
+    public function edit_produit(Request $request, Manager $manager, int $int)    : Response
+    {
+        $user=$this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('EDIT', $user);
+        $coach = $user->getId();
+        
+        $produit_edit = $this->getDoctrine()
+                ->getRepository(Produits::class)
+                ->find($int);
+
+        $form = $this->createForm(ProduitsType::class, $produit_edit);
+        $form->handleRequest($request);
+        $ancienne_image = $produit_edit->getImage();
+        $nom = $ancienne_image->getName();
+        $Prodrepository = $this->getDoctrine()->getRepository(Produits::class);
+        $produits = $Prodrepository->findBy(['Coach' => $coach]);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $image = $form->get('image')->getData();
+            
+            if (!empty($image)) {
+                // On boucle sur les images
+                if ($nom != "") {
+                    unlink($this->getParameter('images_directory').'/'.$nom);
+                    // On génère un nouveau nom de fichier
+                    $fichier = md5(uniqid()).'.'.$image->guessExtension();
+                    
+                    // On copie le fichier dans le dossier uploads
+                    $image->move(
+                        $this->getParameter('images_directory'),
+                        $fichier
+                    );
+                    $manager->editProduit($produit_edit, $ancienne_image, $fichier);
+                    return $this->redirectToRoute('security_produits');
+                } else {
+                    // On génère un nouveau nom de fichier
+                    $fichier = md5(uniqid()).'.'.$image->guessExtension();
+                    
+                    // On copie le fichier dans le dossier uploads
+                    $image->move(
+                        $this->getParameter('images_directory'),
+                        $fichier
+                    );
+                    $manager->editProduit($produit_edit, $ancienne_image, $fichier);
+                    return $this->redirectToRoute('security_produits');
+                }
+            } else {
+                if (!empty($nom)) {
+                    unlink($this->getParameter('images_directory').'/'.$nom);
+                    $fichier = "";
+                    $manager->editProduit($produit_edit, $ancienne_image, $fichier);
+                    return $this->redirectToRoute('security_produits');
+                } else {
+                    $fichier = "";
+                    
+                    return $this->redirectToRoute('security_produits');
+                }
+            }
+            
+            // On crée l'image dans la base de données
+            
+        }
+        
+        return $this->render('security/editproduit.html.twig', [
+            'form' => $form->createView(),
+            'nom' => $nom,
+            'produits' => $produits,
+            ]);
+    }
+
 }

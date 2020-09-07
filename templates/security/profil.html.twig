@@ -5,6 +5,8 @@
     
 
     <profil>
+        <div class="row">
+            <div class="col">
             <h2>{{ app.user.username }}</h2>
             {% if app.user.Iscoach == true %}
                 <label><strong>Vous êtes un Coach</strong></label><br>
@@ -30,27 +32,32 @@
                 {% endif %}
                 
             </div><br>
-        </profil>
-        <a href="{{ path('security_editprofil') }}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Editer mon profil</a><br><br>
-        {% if app.user.Iscoach == true %}
-        <div>
-            <label>Voici vos clients :</label><br>
-            {% for cl in clients %}
-            {% for us in users %}
-            {% if us.id == cl.Client %}
-            <label><strong>{{ us.username }}</strong></label><br>
+            <a href="{{ path('security_editprofil') }}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Editer mon profil</a><br><br>
+            {% if app.user.Iscoach == true %}
+            <div>
+                <label>Voici vos clients :</label><br>
+                {% for cl in clients %}
+                {% for us in users %}
+                {% if us.id == cl.Client %}
+                <label><strong>{{ us.username }}</strong></label>
+                <a href="/profil/delete_clientele/{{us.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% else %}
+            <label>Voici votre Coach :</label><br>
+                {% for co in Thecoach %}
+                {% for us in users %}
+                {% if us.id == co.Coach %}
+                <label><strong>{{ us.username }}</strong></label>
+                <a href="/profil/delete_clientele/{{us.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
             {% endif %}
-            {% endfor %}
-            {% endfor %}
         </div>
-        {% else %}
-        <label>Voici votre Coach :</label><br>
-            {% for co in Thecoach %}
-            {% for us in users %}
-            {% if us.id == co.Coach %}
-            <label><strong>{{ us.username }}</strong></label><br>
-            {% endif %}
-            {% endfor %}
-            {% endfor %}
-        {% endif %}
+        <div class="col"></div>
+        </div>
+    </profil>
     {% endblock %}
