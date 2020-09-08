@@ -18,47 +18,74 @@
         font-size: 3.5rem;
       }
     }
+    .home {
+      background-image: url(../../public/img/Cover.jpg) no-repeat bottom center;
+      background-size: cover;
+      position: relative;
+  }
   </style>
-<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
-    <div class="col-md-5 p-lg-5 mx-auto my-5">
-      <h1 class="display-4 font-weight-normal">1er Graphique</h1>
-      <p class="lead font-weight-normal">WOW ce graphique vreumoont !</p>
-      <a class="btn btn-outline-secondary" href="#">Coming soon</a>
-    </div>
-    </div>
-  
-  <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-    <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
-      <div class="my-3 py-3">
-        <h2 class="display-5">2eme Graphique</h2>
-        <p class="lead">WOW ce graphique vreumoont !</p>
-      </div>
-      <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-    </div>
+  {% if not app.user %}
+  <section id="hello" class="home bg-mega">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="main_home">
+                <div class="home_text">
+                    <h1 class="text-white">BIENVENUE SUR<br /> MY E-COACH!</h1>
+                </div>
 
-    <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-      <div class="my-3 p-3">
-        <h2 class="display-5">3eme Graphique</h2>
-        <p class="lead">WOW ce graphique vreumoont !</p>
-      </div>
-      <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-    </div>
-  </div>
-  
-  <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-    <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-      <div class="my-3 p-3">
-        <h2 class="display-5">4eme Graphique</h2>
-        <p class="lead">WOW ce graphique vreumoont !</p>
-      </div>
-      <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-    </div>
+                <div class="home_btns m-top-40">
+                    <a href="{{ path('security_login') }}" class="btn btn-primary m-top-20">CONNECTEZ-VOUS</a>
+                    <a href="{{ path('security_registration') }}" class="btn btn-default m-top-20">INSCRIVEZ-VOUS</a>
+                </div>
 
-    <div class="bg-primary mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
-      <div class="my-3 py-3">
-        <h2 class="display-5">5eme Graphique</h2>
-        <p class="lead">WOW ce graphique vreumoont !</p>
+            </div>
+        </div><!--End off row-->
+    </div><!--End off container -->
+</section> <!--End off Home Sections-->
+  {% else %}
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+      <div class="col-md-5 p-lg-5 mx-auto my-5">
+        <h1 class="display-4 font-weight-normal">1er Graphique</h1>
+        <p class="lead font-weight-normal">WOW ce graphique</p>
+        <a class="btn btn-outline-secondary" href="#">Coming soon</a>
       </div>
-      <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+      </div>
+    
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+      <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
+        <div class="my-3 py-3">
+          <h2 class="display-5">2eme Graphique</h2>
+          <p class="lead">WOW ce graphique</p>
+        </div>
+        <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+      </div>
+
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+        <div class="my-3 p-3">
+          <h2 class="display-5">3eme Graphique</h2>
+          <p class="lead">WOW ce graphique</p>
+        </div>
+        <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+      </div>
     </div>
-  </div>{% endblock %}
+    
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+        <div class="my-3 p-3">
+          <h2 class="display-5">4eme Graphique</h2>
+          <p class="lead">WOW ce graphique</p>
+        </div>
+        <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+      </div>
+
+      <div class="bg-primary mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
+        <div class="my-3 py-3">
+          <h2 class="display-5">5eme Graphique</h2>
+          <p class="lead">WOW ce graphique</p>
+        </div>
+        <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

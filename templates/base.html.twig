@@ -131,44 +131,45 @@
         </svg>
         <small class="d-block mb-3 text-muted">&copy; 2020</small>
         </div>
-        <div class="col-6 col-md">
-          <h5>Fonctionnalités</h5>
-          <ul class="list-unstyled text-small">
-            <li><a class="text-muted" href="#">Page 1</a></li>
-            <li><a class="text-muted" href="#">Page 2</a></li>
-            <li><a class="text-muted" href="#">Page 3</a></li>
-            <li><a class="text-muted" href="#">Page 4</a></li>
-            <li><a class="text-muted" href="#">Page 5</a></li>
-            <li><a class="text-muted" href="#">Page 6</a></li>
-          </ul>
-        </div>
-        <div class="col-6 col-md">
+        {% if not app.user %}
+        <div class="col-5 col-md">
           <h5>Informations</h5>
           <ul class="list-unstyled text-small">
-            <li><a class="text-muted" href="#">Page 1</a></li>
-            <li><a class="text-muted" href="#">Page 2</a></li>
-            <li><a class="text-muted" href="#">Page 3</a></li>
-            <li><a class="text-muted" href="#">Page 4</a></li>
+            <li><a class="text-muted" href="{{ path('informations') }}">Informations</a></li>
           </ul>
         </div>
-        <div class="col-6 col-md">
-          <h5>Ressources</h5>
-          <ul class="list-unstyled text-small">
-            <li><a class="text-muted" href="#">Page 1</a></li>
-            <li><a class="text-muted" href="#">Page 2</a></li>
-            <li><a class="text-muted" href="#">Page 3</a></li>
-            <li><a class="text-muted" href="#">Page 4</a></li>
-          </ul>
-        </div>
-        <div class="col-6 col-md">
+        <div class="col-5 col-md">
           <h5>Contact</h5>
           <ul class="list-unstyled text-small">
-            <li><a class="text-muted" href="#">Page 1</a></li>
-            <li><a class="text-muted" href="#">Page 2</a></li>
-            <li><a class="text-muted" href="#">Page 3</a></li>
-            <li><a class="text-muted" href="#">Page 4</a></li>
+            <li><a class="text-muted" href="{{ path('support') }}">Support</a></li>
+            <li><a class="text-muted" href="{{ path('contact') }}">Contact</a></li>
           </ul>
         </div>
+        {% else %}
+        <div class="col-5 col-md">
+          <h5>Informations</h5>
+          <ul class="list-unstyled text-small">
+            <li><a class="text-muted" href="{{ path('informations') }}">Informations</a></li>
+          </ul>
+        </div>
+        <div class="col-5 col-md">
+          <h5>Contact</h5>
+          <ul class="list-unstyled text-small">
+            <li><a class="text-muted" href="{{ path('support') }}">Support</a></li>
+            <li><a class="text-muted" href="{{ path('contact') }}">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-5 col-md">
+          <h5>Fonctionnalités</h5>
+          <ul class="list-unstyled text-small">
+            <li><a class="text-muted" href="{{ path('security_profil') }}">Mon profil</a></li>
+            <li><a class="text-muted" href="{{ path('security_produits') }}">Produits</a></li>
+            <li><a class="text-muted" href="{{ path('security_messages') }}">Messages</a></li>
+            <li><a class="text-muted" href="{{ path('security_calendrier') }}">Calendrier</a></li>
+          </ul>
+        </div>
+        {% endif %}
+        
       </div>
     </footer>
 </html>
