@@ -18,6 +18,7 @@
         font-size: 3.5rem;
       }
     }
+
   </style>
   {% if not app.user %}
   <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
@@ -25,9 +26,12 @@
       <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
       <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
       {# <li data-target="#carouselExampleCaptions" data-slide-to="2"></li> #}
+      {# <li data-target="#carouselExampleCaptions" data-slide-to="3"></li> #}
+      {# <li data-target="#carouselExampleCaptions" data-slide-to="4"></li> #}
+      {# <li data-target="#carouselExampleCaptions" data-slide-to="5"></li> #}
     </ol>
     <div class="carousel-inner">
-      <div class="carousel-item active">
+      <div class="carousel-item active" data-interval="8000">
         <img src="{{ asset('/img/Cover.jpg') }}" class="d-block w-60" alt="...">
         <div class="carousel-caption d-none d-md-block">
           <h1>Bienvenue sur My e-coach</h1>
@@ -35,14 +39,35 @@
           <a style="color: black;" class="btn btn-light" href="{{ path('security_login') }}">CONNECTEZ-VOUS</a>
         </div>
       </div>
-      <div class="carousel-item">
-        <img src="{{ asset('/img/Produit.PNG') }}" class="d-block w-60" alt="...">
+      <div class="carousel-item" data-interval="8000">
+        <img src="{{ asset('/img/Produit.PNG') }}" class="d-block w-60 contentimg" alt="...">
         <div class="carousel-caption d-none d-md-block">
           <h1 style="color: black;">Proposez vos produits</h1>
           <p style="color: black;">Mettez à disposition vos conseils nutritions et autres produits à votre clientèle.</p>
         </div>
       </div>
-      {# <div class="carousel-item">
+      {# <div class="carousel-item" data-interval="8000">
+        <img src="{{ asset('/img/Cover.jpg') }}" class="d-block w-60" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+          <h5>Third slide label</h5>
+          <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+        </div>
+      </div> #}
+      {# <div class="carousel-item" data-interval="8000">
+        <img src="{{ asset('/img/Cover.jpg') }}" class="d-block w-60" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+          <h5>Third slide label</h5>
+          <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+        </div>
+      </div> #}
+      {# <div class="carousel-item" data-interval="8000">
+        <img src="{{ asset('/img/Cover.jpg') }}" class="d-block w-60" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+          <h5>Third slide label</h5>
+          <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+        </div>
+      </div> #}
+      {# <div class="carousel-item" data-interval="8000">
         <img src="{{ asset('/img/Cover.jpg') }}" class="d-block w-60" alt="...">
         <div class="carousel-caption d-none d-md-block">
           <h5>Third slide label</h5>

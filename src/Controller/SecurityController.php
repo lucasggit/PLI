@@ -342,4 +342,19 @@ class SecurityController extends AbstractController
             ]);
     }
 
+    /**
+     * @Route("/notes", name="security_notes")
+     */
+    public function notes(Request $request, Manager $manager)
+    {
+        $user=$this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('EDIT', $user);
+        
+
+        return $this->render('security/notes.html.twig', [
+            
+        ]);
+        
+    }
+
 }
