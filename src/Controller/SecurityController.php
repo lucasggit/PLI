@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Clientele;
+use App\Entity\Coach;
 use App\Entity\User;
 use App\Entity\Produits;
 use App\Entity\Images;
@@ -26,12 +28,20 @@ class SecurityController extends AbstractController
 
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
-        $form->remove('link');
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+            $iscoach = $form->get('Iscoach')->getData();
             $Lemanager->addUser($user, $encoder);
-                return $this->redirectToRoute('security_login');
+            if($iscoach == true) {
+                $coach = new Coach;
+                $Lemanager->addCoach($coach, $user);
+            } else {
+                $client = new Client;
+                $Lemanager->addClient($client, $user);
+
+            }
+            return $this->redirectToRoute('security_login');
         }
 
         return $this->render('security/registration.html.twig', [
@@ -62,17 +72,13 @@ class SecurityController extends AbstractController
             $user=$this->get('security.token_storage')->getToken()->getUser();
             $this->denyAccessUnlessGranted('VIEW', $user);
         
-            $repository = $this->getDoctrine()->getRepository(User::class);
-            $Clientrepository = $this->getDoctrine()->getRepository(Clientele::class);
-            $clients = $Clientrepository->findBy(
-                ['Coach' => $user]
+            $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
+            $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
+            
+            
+            $coach = $Coachrepository->findOneBy(
+            ['User' => $user]
             );
-            $Thecoach = $Clientrepository->findBy(
-                ['Client' => $user]
-            );
-            $users = $repository->findAll();
-
-            $clientele = new Clientele;
             $defaultData = ['message' => 'Clef de lien...'];
             $form = $this->createFormBuilder($defaultData)
                         ->add('Client', TextType::class)
@@ -83,17 +89,15 @@ class SecurityController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 // data is an array with "name", "email", and "message" keys
                 $data = $form->getData();
-                $client = $repository->findOneBy(['link' => $data]);
-                if (is_null($client)) 
+                $add_client = $Clientrepository->findOneBy(['Link' => $data]);
+                if (is_null($add_client)) 
                 {
                     echo "<script>alert(\"Client introuvable\")</script>";
                 } else {
-                    $Theclient = $Clientrepository->findOneBy([
-                        'Client' => $client->getId(),
-                    ]);
-                    if (is_null($Theclient))
+                    $have_coach = $add_client->getCoach();
+                    if (is_null($have_coach))
                     {
-                        $manager->addClientele($clientele, $client, $user);
+                        $manager->addRelation($coach, $add_client);
                         return $this->redirectToRoute('security_profil');
                     } else {
                         echo "<script>alert(\"Ce client a déjà un Coach (max : 1)\")</script>";
@@ -101,11 +105,15 @@ class SecurityController extends AbstractController
                 }
             }
 
+            $client = $Clientrepository->findOneBy(
+                ['User' => $user]
+                );
+            
+
             return $this->render('security/profil.html.twig', [
                 'form' => $form->createView(),
-                'clients'=> $clients,
-                'users' => $users,
-                'Thecoach' => $Thecoach,
+                'coach' => $coach,
+                'client' => $client,
             ]);
     }
 
@@ -121,7 +129,6 @@ class SecurityController extends AbstractController
 
         $form = $this->createForm(UserType::class, $user);
         $form->remove('Iscoach');
-        $form->remove('link');
         $form->handleRequest($request);
         
         if($form->isSubmitted() && $form->isValid()) { 
@@ -137,30 +144,32 @@ class SecurityController extends AbstractController
     }
 
     /**
-    * @Route("/profil/delete_clientele/{int}", name="security_Deleclientele")
+    * @Route("/profil/delete_relation/{int}", name="security_DeleRelation")
     */
-    public function delete_clientele(int $int, Manager $manager)
+    public function delete_relation(int $int, Manager $manager)
     {
         $user=$this->get('security.token_storage')->getToken()->getUser();
         $this->denyAccessUnlessGranted('EDIT', $user);
         
-        $Clientrepository = $this->getDoctrine()->getRepository(Clientele::class);
-        $id = $user->getId();
+        $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
+        $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
 
-        $Userrepository = $this->getDoctrine()->getRepository(User::class);
-        $User = $Userrepository->findOneBy(['id' => $int]);
         if ($user->getIsCoach() == 1) {
-            $clientele = $Clientrepository->findOneBy([
-                'Coach' => $id,
-                'Client' => $User,
+            $coach = $Coachrepository->findOneBy([
+                'User' => $user,
+            ]);
+            $client = $Clientrepository->findOneBy([
+                'id' => $int,
             ]);
         } else {
-            $clientele = $Clientrepository->findOneBy([
-                'Coach' => $User,
-                'Client' => $id,
+            $coach = $Coachrepository->findOneBy([
+                'id' => $int,
+            ]);
+            $client = $Clientrepository->findOneBy([
+                'User' => $user,
             ]);
         }
-        $manager->deleteClientele($clientele);
+        $manager->deleteRelation($coach, $client);
         return $this->redirectToRoute('security_profil');
     }
     
@@ -192,18 +201,20 @@ class SecurityController extends AbstractController
     {
         $user=$this->get('security.token_storage')->getToken()->getUser();
         $this->denyAccessUnlessGranted('EDIT', $user);
-        $Prodrepository = $this->getDoctrine()->getRepository(Produits::class);
-        $coach = $user->getId();
         
-        $Clientrepository = $this->getDoctrine()->getRepository(Clientele::class);
-        $monCoach = $Clientrepository->findOneBy(
-            ['Client' => $user]
-        );
-        if (empty($monCoach)){
-            $Produits_client = "";
-        } else {
-            $Produits_client = $Prodrepository->findBy(['Coach' => $monCoach->getCoach()]);
-        }
+        $Prodrepository = $this->getDoctrine()->getRepository(Produits::class);
+        $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
+        $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
+        
+        
+        $coach = $Coachrepository->findOneBy([
+            'User' => $user,
+        ]);
+        
+        $client = $Clientrepository->findOneBy([
+            'User' => $user,
+        ]);
+       
         $Imarepository = $this->getDoctrine()->getRepository(Images::class);
         $produits = $Prodrepository->findBy(['Coach' => $coach]);
         $produit = new Produits();
@@ -230,7 +241,7 @@ class SecurityController extends AbstractController
             // On crée l'image dans la base de données
             $img = new Images();
             $img->setName($fichier);
-            $manager->addProduit($produit, $user, $img);
+            $manager->addProduit($produit, $coach, $img);
             return $this->redirectToRoute('security_produits');
         }
         $images = $Imarepository->findAll();
@@ -239,7 +250,7 @@ class SecurityController extends AbstractController
             'form' => $form->createView(),
             'produits' => $produits,
             'images' => $images,
-            'Produits_client' => $Produits_client,
+            'client' => $client,
         ]);
         
     }
@@ -251,17 +262,22 @@ class SecurityController extends AbstractController
     {
         $user=$this->get('security.token_storage')->getToken()->getUser();
         $this->denyAccessUnlessGranted('EDIT', $user);
-        $produit = $this->getDoctrine()
-                ->getRepository(Produits::class)
-                ->find($int);
+        
+        $Produitrepository = $this->getDoctrine()->getRepository(Produits::class);
+        $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
+        
+        $produit = $Produitrepository->findOneBy([
+            'id' => $int,
+        ]);
+        
         
         // On récupère le nom de l'image
         $image = $produit->getImage();
         $nom = $image->getName();
         if ($nom != "") {
-            unlink($this->getParameter('images_directory').'/'.$nom);
             // On génère un nouveau nom de fichier
             $manager->deleteProduit($produit);
+            unlink($this->getParameter('images_directory').'/'.$nom);
             return $this->redirectToRoute('security_produits');
         } else {
             $manager->deleteProduit($produit);

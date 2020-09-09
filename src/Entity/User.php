@@ -55,25 +55,18 @@ class User implements UserInterface
     private $createdAt;
 
     /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Coach", mappedBy="User", cascade={"persist", "remove"})
+     */
+    private $coach;
+
+    /**
      * @ORM\Column(type="boolean")
      */
     private $Iscoach;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Produits", mappedBy="Coach")
-     */
-    private $produit;
-
-    /**
-     * @ORM\Column(type="string", length=16)
-     */
-    private $link;
-
     public function __construct()
     {
-        $this->produit = new ArrayCollection();
-        $this->Client = new ArrayCollection();
-        $this->Coach = new ArrayCollection();
+        $this->notes = new ArrayCollection();
     }
 
 
@@ -150,61 +143,34 @@ class User implements UserInterface
         return $this->username;
     }
 
-    public function getIsCoach(): ?bool
+    public function getcoach(): ?Coach
+    {
+        return $this->coach;
+    }
+
+    public function setcoach(?Coach $coach): self
+    {
+        $this->coach = $coach;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newUser = null === $coach ? null : $this;
+        if ($coach->getUser() !== $newUser) {
+            $coach->setUser($newUser);
+        }
+
+        return $this;
+    }
+
+    public function getIscoach(): ?bool
     {
         return $this->Iscoach;
     }
 
-    public function setIsCoach(bool $Iscoach): self
+    public function setIscoach(bool $Iscoach): self
     {
         $this->Iscoach = $Iscoach;
 
         return $this;
     }
-
-    /**
-     * @return Collection|Produits[]
-     */
-    public function getProduit(): Collection
-    {
-        return $this->produit;
-    }
-
-    public function addProduit(Produits $produit): self
-    {
-        if (!$this->produit->contains($produit)) {
-            $this->produit[] = $produit;
-            $produit->setCoach($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduit(Produits $produit): self
-    {
-        if ($this->produit->contains($produit)) {
-            $this->produit->removeElement($produit);
-            // set the owning side to null (unless already changed)
-            if ($produit->getCoach() === $this) {
-                $produit->setCoach(null);
-            }
-        }
-
-        return $this;
-    }
-
-
-    public function getLink(): ?string
-    {
-        return $this->link;
-    }
-
-    public function setLink(string $link): self
-    {
-        $this->link = $link;
-
-        return $this;
-    }
-
 
 }

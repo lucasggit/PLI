@@ -8,17 +8,14 @@
         <div class="row">
             <div class="col">
             <h2>{{ app.user.username }}</h2>
-            {% if app.user.Iscoach == true %}
+            {% if app.user.Iscoach == 1 %}
                 <label><strong>Vous êtes un Coach</strong></label><br>
                 {% endif %}
             <div class="metadata">Membre depuis le {{  app.user.createdAt | date('d/m/Y') }} à {{  app.user.createdAt | date('H:i') }}</div><br>
             <div class="content">
                 <label>Votre adresse email :</label>
                 <label><strong>{{ app.user.email }}</strong></label><br>
-                {% if app.user.Iscoach == true %}
-                {# <label>Votre clef de lien :</label>
-                <label>{{ app.user.link }}</label><br>
-                <label>Cette clef est personnelle. Vous pouvez fournir cette clef à votre coach pour vous lier.</label><br>#}
+                {% if app.user.Iscoach == 1 %}
                 {{ form_start(form) }} 
 
                 {{ form_row(form.Client, {'label': 'Entrez la clef d\'un client ici :', 'attr':{'class': 'form-control'}}) }}
@@ -27,33 +24,25 @@
                 {{ form_end(form) }}
                 {% else %}
                 <label>Votre clef de lien :</label>
-                <label><strong>{{ app.user.link }}</strong></label><br>
+                <label><strong>{{ client.link }}</strong></label><br>
                 <label>(Cette clef est personnelle. Vous pouvez fournir cette clef à votre coach pour vous lier.)</label><br>
                 {% endif %}
                 
             </div><br>
             <a href="{{ path('security_editprofil') }}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Editer mon profil</a><br><br>
-            {% if app.user.Iscoach == true %}
+            {% if app.user.Iscoach == 1 %}
             <div>
                 <label>Voici vos clients :</label><br>
-                {% for cl in clients %}
-                {% for us in users %}
-                {% if us.id == cl.Client %}
-                <label><strong>{{ us.username }}</strong></label>
-                <a href="/profil/delete_clientele/{{us.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
-                {% endif %}
-                {% endfor %}
+                {% for client in coach.clients %}
+                <label><strong>{{ client.user.username }}</strong></label>
+                <a href="/profil/delete_relation/{{client.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
                 {% endfor %}
             </div>
             {% else %}
             <label>Voici votre Coach :</label><br>
-                {% for co in Thecoach %}
-                {% for us in users %}
-                {% if us.id == co.Coach %}
-                <label><strong>{{ us.username }}</strong></label>
-                <a href="/profil/delete_clientele/{{us.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
-                {% endif %}
-                {% endfor %}
+                {% for coach in client.coach %}
+                <label><strong>{{ coach.user.username }}</strong></label>
+                <a href="/profil/delete_relation/{{coach.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
                 {% endfor %}
             {% endif %}
         </div>

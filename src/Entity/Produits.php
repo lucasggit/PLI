@@ -19,11 +19,6 @@ class Produits
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\user", inversedBy="produit")
-     */
-    private $Coach;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $CreatedAt;
@@ -38,33 +33,15 @@ class Produits
      */
     private $text;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Coach", inversedBy="produits")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $Coach;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUser(): ?user
-    {
-        return $this->User;
-    }
-
-    public function setUser(?user $User): self
-    {
-        $this->User = $User;
-
-        return $this;
-    }
-
-    public function getCoach(): ?user
-    {
-        return $this->Coach;
-    }
-
-    public function setCoach(?user $Coach): self
-    {
-        $this->Coach = $Coach;
-
-        return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeInterface
@@ -99,6 +76,18 @@ class Produits
     public function setText(?string $text): self
     {
         $this->text = $text;
+
+        return $this;
+    }
+
+    public function getCoach(): ?Coach
+    {
+        return $this->Coach;
+    }
+
+    public function setCoach(?Coach $Coach): self
+    {
+        $this->Coach = $Coach;
 
         return $this;
     }

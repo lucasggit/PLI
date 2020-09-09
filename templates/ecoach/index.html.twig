@@ -19,6 +19,11 @@
       }
     }
 
+    .center {
+      display: block;
+      margin: 0 auto;
+  }
+
   </style>
   {% if not app.user %}
   <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
@@ -32,7 +37,7 @@
     </ol>
     <div class="carousel-inner">
       <div class="carousel-item active" data-interval="8000">
-        <img src="{{ asset('/img/Cover.jpg') }}" class="d-block w-60" alt="...">
+        <img src="{{ asset('/img/Cover.jpg') }}" class="d-block w-60 center" alt="...">
         <div class="carousel-caption d-none d-md-block">
           <h1>Bienvenue sur My e-coach</h1>
           <a class="btn btn-dark" href="{{ path('security_registration') }}">INSCRIVEZ-VOUS</a>
@@ -40,7 +45,7 @@
         </div>
       </div>
       <div class="carousel-item" data-interval="8000">
-        <img src="{{ asset('/img/Produit.PNG') }}" class="d-block w-60 contentimg" alt="...">
+        <img src="{{ asset('/img/Produit.PNG') }}" class="d-block w-60 center" alt="...">
         <div class="carousel-caption d-none d-md-block">
           <h1 style="color: black;">Proposez vos produits</h1>
           <p style="color: black;">Mettez à disposition vos conseils nutritions et autres produits à votre clientèle.</p>

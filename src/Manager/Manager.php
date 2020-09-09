@@ -1,9 +1,11 @@
 <?php
 namespace App\Manager;
 
+use App\Entity\Client;
 use App\Entity\User;
 use App\Entity\Produits;
 use App\Entity\Clientele;
+use App\Entity\Coach;
 use App\Entity\Images;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,11 +17,28 @@ class Manager extends AbstractController
     public function addUser(User $user,UserPasswordEncoderInterface $encoder) {
 
         $manager = $this->getDoctrine()->getManager();
-        if($user->getIsCoach() == 1) {
-
-        }
         $hash = $encoder->encodePassword($user, $user->getPassword());
         $user->setPassword($hash);
+        $user->setCreatedAt(new \DateTime());
+        $this->created_at = new \DateTime();
+        $this->updated_at = new \DateTime();
+
+        $manager->persist($user);
+        $manager->flush();
+    }
+
+    public function addCoach(Coach $coach, User $user) {
+
+        $manager = $this->getDoctrine()->getManager();
+        $coach->setUser($user);
+        $manager->persist($coach);
+        $manager->flush();
+    }
+
+    public function addClient(Client $client, User $user) {
+
+        $manager = $this->getDoctrine()->getManager();
+        $client->setUser($user);
         $length = 16;
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
@@ -27,12 +46,8 @@ class Manager extends AbstractController
             for ($i = 0; $i < $length; $i++) {
                 $randomString .= $characters[rand(0, $charactersLength - 1)];
             }
-        $user->setLink($randomString);
-        $user->setCreatedAt(new \DateTime());
-        $this->created_at = new \DateTime();
-        $this->updated_at = new \DateTime();
-
-        $manager->persist($user);
+        $client->setLink($randomString);
+        $manager->persist($client);
         $manager->flush();
     }
 
@@ -50,10 +65,10 @@ class Manager extends AbstractController
         $this->objectManager->flush();
     }
 
-    public function addProduit(Produits $Produits, User $user, Images $image) {
+    public function addProduit(Produits $Produits, Coach $coach, Images $image) {
 
         $manager = $this->getDoctrine()->getManager();
-        $Produits->setCoach($manager->getRepository(User::class)->find($this->getUser()));
+        $Produits->setCoach($coach);
         $Produits->setImage($image);
         $Produits->setCreatedAt(new \DateTime());
         $this->created_at = new \DateTime();
@@ -80,20 +95,18 @@ class Manager extends AbstractController
         $this->getDoctrine()->getManager()->flush();
     }
 
-    public function addClientele(Clientele $Clientele, User $client, User $user) {
+    public function addRelation(Coach $coach, Client $client) {
 
         $manager = $this->getDoctrine()->getManager();
-        $Clientele->setClient($client->getId());
-        $Clientele->setCoach($user->getId());
-
-        $manager->persist($Clientele);
+        $coach->addClient($client);
+        $manager->persist($coach);
         $manager->flush();
     }
 
-    public function deleteClientele(Clientele $Clientele) {
+    public function deleteRelation(Coach $coach, Client $client) {
 
         $manager = $this->getDoctrine()->getManager();
-        $manager->remove($Clientele);
+        $coach->removeClient($client);
         $manager->flush();
 
     }

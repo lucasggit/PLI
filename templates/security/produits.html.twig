@@ -77,7 +77,7 @@
   <p class="lead font-weight-normal">Les articles proposés par ton coach</p>
 </div>
 <div class="row">
-{% for produit in Produits_client %}
+{% for produit in client.coach.produits %}
   <div class="col-md-4">
     <div class="card mb-4 shadow-sm">
       {% if produit.image.name %}
