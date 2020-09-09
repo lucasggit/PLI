@@ -7,6 +7,7 @@ use App\Entity\Produits;
 use App\Entity\Clientele;
 use App\Entity\Coach;
 use App\Entity\Images;
+use App\Entity\Notes;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -109,6 +110,34 @@ class Manager extends AbstractController
         $coach->removeClient($client);
         $manager->flush();
 
+    }
+
+    public function addNote(Notes $notes, Coach $coach) {
+
+        $manager = $this->getDoctrine()->getManager();
+        $notes->setCoach($coach);
+        $notes->setCreatedAt(new \DateTime());
+        $this->created_at = new \DateTime();
+        $this->updated_at = new \DateTime();
+
+        $manager->persist($notes);
+        $manager->flush();
+    }
+
+    public function deleteNote(Notes $note) {
+
+        $manager = $this->getDoctrine()->getManager();
+        $manager->remove($note);
+        $manager->flush();
+
+    }
+
+    public function editNote(Notes $note, Images $image, string $fichier)
+    {
+        $note->setCreatedAt(new \DateTime());
+        $this->created_at = new \DateTime();
+        $this->updated_at = new \DateTime();
+        $this->getDoctrine()->getManager()->flush();
     }
 
 }

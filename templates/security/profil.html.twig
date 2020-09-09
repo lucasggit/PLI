@@ -24,7 +24,7 @@
                 {{ form_end(form) }}
                 {% else %}
                 <label>Votre clef de lien :</label>
-                <label><strong>{{ client.link }}</strong></label><br>
+                <label><strong>{{ Client_.link }}</strong></label><br>
                 <label>(Cette clef est personnelle. Vous pouvez fournir cette clef à votre coach pour vous lier.)</label><br>
                 {% endif %}
                 
@@ -33,17 +33,15 @@
             {% if app.user.Iscoach == 1 %}
             <div>
                 <label>Voici vos clients :</label><br>
-                {% for client in coach.clients %}
+                {% for client in Coach_.clients %}
                 <label><strong>{{ client.user.username }}</strong></label>
                 <a href="/profil/delete_relation/{{client.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
                 {% endfor %}
             </div>
             {% else %}
             <label>Voici votre Coach :</label><br>
-                {% for coach in client.coach %}
-                <label><strong>{{ coach.user.username }}</strong></label>
-                <a href="/profil/delete_relation/{{coach.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
-                {% endfor %}
+                <label><strong>{{ Client_.coach }}</strong></label>
+                <a href="/profil/delete_relation/{{Client_.coach.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
             {% endif %}
         </div>
         <div class="col"></div>

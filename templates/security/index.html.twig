@@ -99,18 +99,43 @@
       </div>
     
     <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-      <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
-        <div class="my-3 py-3">
-          <h2 class="display-5">2eme Graphique</h2>
-          <p class="lead">WOW ce graphique</p>
-        </div>
-        <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+      <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white">
+        <div class="my-3 py-3"></div>
+        {% if app.user.Iscoach == true %}
+            {% for produit in coach.produits %}
+                  {% if produit.image.name %}
+                  <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{ asset('/uploads/'~produit.image.name) }}" alt="Image not Found"></img>
+                  {% else %}
+                  <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Aucune Image</text></svg>
+                  {% endif %}
+                    {{ produit.text}}
+                      {{  produit.createdAt | date('d/m/Y') }} - {{  produit.createdAt | date('H:i') }}
+            {% endfor %}
+          {% else %}
+            {% for produit in client.coach.produits %}
+              <div>
+                  {% if produit.image.name %}
+                  <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{ asset('/uploads/'~produit.image.name) }}" alt="Image not Found"></img>
+                  {% else %}
+                  <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Aucune Image</text></svg>
+                  {% endif %}
+                  <div>
+                    <p>{{ produit.text}}</p>
+                    <div class="">
+                      <small>{{  produit.createdAt | date('d/m/Y') }} - {{  produit.createdAt | date('H:i') }}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        
+        {# <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div> #}
       </div>
 
       <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
         <div class="my-3 p-3">
-          <h2 class="display-5">3eme Graphique</h2>
-          <p class="lead">WOW ce graphique</p>
+          
         </div>
         <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
       </div>

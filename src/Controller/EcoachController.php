@@ -2,20 +2,18 @@
 
 namespace App\Controller;
 
+
+use App\Entity\Client;
+use App\Entity\Coach;
+use App\Entity\User;
+use App\Entity\Produits;
+use App\Entity\Images;
+use App\Entity\Notes;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 class EcoachController extends AbstractController
 {
-    /**
-     * @Route("/", name="index")
-     */
-    public function index()
-    {
-        return $this->render('ecoach/index.html.twig', [
-            'controller_name' => 'EcoachController',
-        ]);
-    }
 
     
     /**

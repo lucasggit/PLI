@@ -3,11 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Client;
-use App\Entity\Clientele;
 use App\Entity\Coach;
 use App\Entity\User;
 use App\Entity\Produits;
 use App\Entity\Images;
+use App\Entity\Notes;
+use App\Form\NotesType;
 use App\Form\UserType;
 use App\Manager\Manager;
 use App\Form\ProduitsType;
@@ -21,6 +22,39 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class SecurityController extends AbstractController
 {
+
+    /**
+     * @Route("/", name="index")
+     */
+    public function index()
+    {
+        $user=$this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('EDIT', $user);
+        
+        $Prodrepository = $this->getDoctrine()->getRepository(Produits::class);
+        $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
+        $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
+        
+        
+        $coach = $Coachrepository->findOneBy([
+            'User' => $user,
+        ]);
+        
+        $client = $Clientrepository->findOneBy([
+            'User' => $user,
+        ]);
+
+        $produits = $Prodrepository->findBy(['Coach' => $coach]);
+
+        return $this->render('security/index.html.twig', [
+            'controller_name' => 'EcoachController',
+            'coach' => $coach,
+            'client' => $client,
+            'produits' => $produits,
+        ]);
+    }
+
+
     /**
      * @Route("/register", name="security_registration")
      */
@@ -112,8 +146,8 @@ class SecurityController extends AbstractController
 
             return $this->render('security/profil.html.twig', [
                 'form' => $form->createView(),
-                'coach' => $coach,
-                'client' => $client,
+                'Coach_' => $coach,
+                'Client_' => $client,
             ]);
     }
 
@@ -366,9 +400,34 @@ class SecurityController extends AbstractController
         $user=$this->get('security.token_storage')->getToken()->getUser();
         $this->denyAccessUnlessGranted('EDIT', $user);
         
+        $Noterepository = $this->getDoctrine()->getRepository(Notes::class);
+        $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
+        $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
+        
+        
+        $coach = $Coachrepository->findOneBy([
+            'User' => $user,
+        ]);
+        
+        $client = $Clientrepository->findOneBy([
+            'User' => $user,
+        ]);
+       
+        $notes = $Noterepository->findBy(['Coach' => $coach]);
+        $note = new Notes();
+        $form = $this->createForm(NotesType::class, $note);
+        $form->remove('Coach');
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $manager->addNote($note, $coach);
+            return $this->redirectToRoute('security_notes');
+        }
 
         return $this->render('security/notes.html.twig', [
-            
+            'form' => $form->createView(),
+            'notes' => $notes,
+            'client' => $client,
         ]);
         
     }
