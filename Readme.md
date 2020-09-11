@@ -10,6 +10,11 @@
 ## Features
 
 - Page statique Home / informations / Contact / Support
+- Page home : 
+    Affichage des informations :
+        Produits intégrés
+        Notes intégrées
+        ...
 - Authentification et inscription du Client et du Coach
 - Les coachs peuvent ajouter des clients grace à leur token unique depuis leur profil
 - Les coachs et les clients visualisent qui sont leur clients/coach, depuis leur profil
