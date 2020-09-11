@@ -21,11 +21,9 @@
 </style>
 <div class="col-md-5 p-lg-5 mx-auto my-5">
   <h1 class="display-4 font-weight-normal">Les notes</h1>
-  {% if app.user.Iscoach == true %}
   <p class="lead font-weight-normal">Personnalisez vos notes</p>
 </div>
 {{ form_start(form) }}
-
 <div class="row">
   <div class="col-md-4"></div>
   <div class="col-md-4">
@@ -48,7 +46,7 @@
         </p>
         <div class="d-flex justify-content-between align-items-center">
           <div class="btn-group">
-            <button type="submit" class="btn btn-sm btn-outline-secondary">Ajouter</button>
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Mettre à jour</button>
           </div>
         </div>
       </div>
@@ -58,41 +56,6 @@
 {{ form_end(form) }}
 <div class="row">
   {% for note in notes %}
-  <div class="col-md-4">
-    <div class="card mb-4 shadow-sm" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false">
-      <div class="card-body">
-        <h5 class="card-title"> 
-          {{ note.Title }}
-      </h5>
-        <h6 class="card-subtitle mb-2 text-muted">
-          Note : 
-        </h6>
-        <p class="card-text">
-          {{ note.Texte }}
-        </p>
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="btn-group">
-            <a type="button" class="btn btn-sm btn-outline-secondary" href="/notes/{{ note.id }}/edit">Éditer</a>
-            <a type="button" class="btn btn-sm btn-outline-secondary" href="/notes/{{ note.id }}/delete">Effacer</a>
-          </div>
-          <small class="text-muted">{{ note.client.user.username }}</small>
-          {# <small class="text-muted"> </small>
-          <small class="text-muted"> </small> #}
-          <small class="text-muted">{{  note.createdAt | date('d/m/Y') }} - {{  note.createdAt | date('H:i') }}</small>
-          </div>
-        </div>
-      </div>
-    </div>
-  {% endfor %}
-</div>
-
-{% else %}
-  <p class="lead font-weight-normal">Les articles proposés par ton coach</p>
-</div>
-<div class="row">
-{% for note in client.coach.notes %}
-    {% if note.Client == client %}
-
     <div class="col-md-4">
       <div class="card mb-4 shadow-sm" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false">
         <div class="card-body">
@@ -107,17 +70,19 @@
           </p>
           <div class="d-flex justify-content-between align-items-center">
             <div class="btn-group">
+              <a type="button" class="btn btn-sm btn-outline-secondary" href="/notes/{{ note.id }}/edit">Éditer</a>
+              <a type="button" class="btn btn-sm btn-outline-secondary" href="/notes/{{ note.id }}/delete">Effacer</a>
             </div>
             <small class="text-muted">{{ note.client.user.username }}</small>
+            {# <small class="text-muted"> </small>
+            <small class="text-muted"> </small> #}
             <small class="text-muted">{{  note.createdAt | date('d/m/Y') }} - {{  note.createdAt | date('H:i') }}</small>
             </div>
           </div>
         </div>
       </div>
-    {% endif %}
-{% endfor %}
+  {% endfor %}
 </div>
-{% endif %}
 {% endblock %}
 {% block javascripts %}
     <script src="{{ asset('js/images.js') }}"></script>

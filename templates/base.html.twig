@@ -132,34 +132,7 @@
         </svg>
         <small class="d-block mb-3 text-muted">&copy; 2020</small>
         </div>
-        {% if not app.user %}
-        <div class="col-5 col-md">
-          <h5>Informations</h5>
-          <ul class="list-unstyled text-small">
-            <li><a class="text-muted" href="{{ path('informations') }}">Informations</a></li>
-          </ul>
-        </div>
-        <div class="col-5 col-md">
-          <h5>Contact</h5>
-          <ul class="list-unstyled text-small">
-            <li><a class="text-muted" href="{{ path('support') }}">Support</a></li>
-            <li><a class="text-muted" href="{{ path('contact') }}">Contact</a></li>
-          </ul>
-        </div>
-        {% else %}
-        <div class="col-5 col-md">
-          <h5>Informations</h5>
-          <ul class="list-unstyled text-small">
-            <li><a class="text-muted" href="{{ path('informations') }}">Informations</a></li>
-          </ul>
-        </div>
-        <div class="col-5 col-md">
-          <h5>Contact</h5>
-          <ul class="list-unstyled text-small">
-            <li><a class="text-muted" href="{{ path('support') }}">Support</a></li>
-            <li><a class="text-muted" href="{{ path('contact') }}">Contact</a></li>
-          </ul>
-        </div>
+        {% if app.user %}
         <div class="col-5 col-md">
           <h5>Fonctionnalités</h5>
           <ul class="list-unstyled text-small">
@@ -170,6 +143,21 @@
           </ul>
         </div>
         {% endif %}
+        <div class="col-5 col-md">
+          <h5>Contact</h5>
+          <ul class="list-unstyled text-small">
+            <li><a class="text-muted" href="{{ path('support') }}">Support</a></li>
+            <li><a class="text-muted" href="{{ path('contact') }}">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-5 col-md">
+          <h5>Informations</h5>
+          <ul class="list-unstyled text-small">
+            <li><a class="text-muted" href="{{ path('informations') }}">Informations</a></li>
+          </ul>
+        </div>
+        
+        
         
       </div>
     </footer>

@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Notes;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -16,7 +17,7 @@ class NotesType extends AbstractType
             ->add('Texte')
             ->add('Coach')
             ->add('Client')
-        ;
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver)

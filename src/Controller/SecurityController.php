@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Constraints\IsFalse;
 
 class SecurityController extends AbstractController
 {
@@ -27,29 +28,35 @@ class SecurityController extends AbstractController
      * @Route("/", name="index")
      */
     public function index()
-    {
-        $user=$this->get('security.token_storage')->getToken()->getUser();
-        $this->denyAccessUnlessGranted('EDIT', $user);
+    {      
+        $user = $this->get('security.token_storage')->getToken()->getUser();
         
+        if ($user == "anon."){
+            $user = null;
+            $coach = null;
+            $client = null;
+            $produits = null;
+        }else{
         $Prodrepository = $this->getDoctrine()->getRepository(Produits::class);
         $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
         $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
         
+        if ($user->getIscoach() == 1){
+           $coach = $Coachrepository->findOneBy(['User' => $user]);
+           $client = $Clientrepository->findAll();
+        } else {
+            $client = $Clientrepository->findOneBy(['User' => $user]);
+            $coach = $Coachrepository->findAll();
+        }   
+            $produits = $Prodrepository->findBy(['Coach' => $coach]);
+        }
         
-        $coach = $Coachrepository->findOneBy([
-            'User' => $user,
-        ]);
         
-        $client = $Clientrepository->findOneBy([
-            'User' => $user,
-        ]);
-
-        $produits = $Prodrepository->findBy(['Coach' => $coach]);
 
         return $this->render('security/index.html.twig', [
-            'controller_name' => 'EcoachController',
-            'coach' => $coach,
-            'client' => $client,
+            'controller_name' => 'SecurityController',
+            'Coach_' => $coach,
+            'Client_' => $client,
             'produits' => $produits,
         ]);
     }
@@ -430,6 +437,58 @@ class SecurityController extends AbstractController
             'client' => $client,
         ]);
         
+    }
+
+    /**
+    * @Route("/notes/{int}/delete", name="security_Delenotes")
+    */
+    public function delete_note(int $int, Manager $manager)
+    {
+        $user=$this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('EDIT', $user);
+        
+        $Noterepository = $this->getDoctrine()->getRepository(Notes::class);
+        
+        $note = $Noterepository->findOneBy([
+            'id' => $int,
+        ]);
+        $manager->deleteNote($note);
+        return $this->redirectToRoute('security_notes');
+    }
+
+    /**
+    * @Route("/notes/{int}/edit", name="security_Editnotes")
+    */
+    public function edit_note(Request $request, Manager $manager, int $int)    : Response
+    {
+        $user=$this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('EDIT', $user);
+        
+        $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
+
+        $coach = $Coachrepository->findBy([
+            'User' => $user,
+        ]);
+        
+        $note_edit = $this->getDoctrine()
+                ->getRepository(Notes::class)
+                ->find($int);
+
+        $form = $this->createForm(NotesType::class, $note_edit);
+        $form->remove('Coach');
+        $form->handleRequest($request);
+        $Noterepository = $this->getDoctrine()->getRepository(Notes::class);
+        $notes = $Noterepository->findBy(['Coach' => $coach]);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $manager->editNote($note_edit);
+            return $this->redirectToRoute('security_notes');
+        }
+        
+        return $this->render('security/editnote.html.twig', [
+            'form' => $form->createView(),
+            'notes' => $notes,
+            ]);
     }
 
 }

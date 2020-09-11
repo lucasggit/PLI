@@ -132,7 +132,7 @@ class Manager extends AbstractController
 
     }
 
-    public function editNote(Notes $note, Images $image, string $fichier)
+    public function editNote(Notes $note)
     {
         $note->setCreatedAt(new \DateTime());
         $this->created_at = new \DateTime();

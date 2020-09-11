@@ -23,6 +23,11 @@
       display: block;
       margin: 0 auto;
   }
+  .imagehome {
+    width: 100%;
+    height: 35vw;
+    object-fit: cover;
+  }
 
   </style>
   {% if not app.user %}
@@ -37,7 +42,7 @@
     </ol>
     <div class="carousel-inner">
       <div class="carousel-item active" data-interval="8000">
-        <img src="{{ asset('/img/Cover.jpg') }}" class="d-block w-60 center" alt="...">
+        <img src="{{ asset('/img/Cover.jpg') }}" class="d-block w-60 center imagehome" alt="...">
         <div class="carousel-caption d-none d-md-block">
           <h1>Bienvenue sur My e-coach</h1>
           <a class="btn btn-dark" href="{{ path('security_registration') }}">INSCRIVEZ-VOUS</a>
@@ -45,7 +50,7 @@
         </div>
       </div>
       <div class="carousel-item" data-interval="8000">
-        <img src="{{ asset('/img/Produit.PNG') }}" class="d-block w-60 center" alt="...">
+        <img src="{{ asset('/img/Produit.PNG') }}" class="d-block w-60 center imagehome" alt="...">
         <div class="carousel-caption d-none d-md-block">
           <h1 style="color: black;">Proposez vos produits</h1>
           <p style="color: black;">Mettez à disposition vos conseils nutritions et autres produits à votre clientèle.</p>
@@ -98,48 +103,121 @@
       </div>
       </div>
     
-    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-      <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white">
-        <div class="my-3 py-3"></div>
-        {% if app.user.Iscoach == true %}
-            {% for produit in coach.produits %}
-                  {% if produit.image.name %}
-                  <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{ asset('/uploads/'~produit.image.name) }}" alt="Image not Found"></img>
-                  {% else %}
-                  <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Aucune Image</text></svg>
-                  {% endif %}
-                    {{ produit.text}}
-                      {{  produit.createdAt | date('d/m/Y') }} - {{  produit.createdAt | date('H:i') }}
-            {% endfor %}
-          {% else %}
-            {% for produit in client.coach.produits %}
-              <div>
-                  {% if produit.image.name %}
-                  <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{ asset('/uploads/'~produit.image.name) }}" alt="Image not Found"></img>
-                  {% else %}
-                  <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Aucune Image</text></svg>
-                  {% endif %}
-                  <div>
-                    <p>{{ produit.text}}</p>
-                    <div class="">
-                      <small>{{  produit.createdAt | date('d/m/Y') }} - {{  produit.createdAt | date('H:i') }}</small>
+      <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+        <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 overflow-hidden">
+          <div class="my-3 p-3">
+            {% if app.user.Iscoach == 1 %}
+              {% for note in Coach_.notes %}
+                {% if note == Coach_.notes|last %}
+                  <div class="card mb-4 shadow-sm" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false">
+                    <div class="card-body">
+                      <h5 class="card-title"> 
+                        {{ note.Title }}
+                        {# Titre #}
+                    </h5>
+                      <h6 class="card-subtitle mb-2 text-muted">
+                        Note : 
+                      </h6>
+                      <p class="card-text">
+                        {{ note.Texte }}
+                        {# Text #}
+                      </p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_notes') }}">Voir plus...</a>
+                        </div>
+                        <small class="text-muted">{{ note.client.user.username }}</small>
+                        <small class="text-muted">{{  note.createdAt | date('d/m/Y') }} - {{  note.createdAt | date('H:i') }}</small>
+                        {# <small class="text-muted">Salut</small>
+                        <small class="text-muted">00:00:00 00/00/00</small> #}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            {% endfor %}
-          {% endif %}
-        
-        {# <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div> #}
-      </div>
-
-      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-        <div class="my-3 p-3">
-          
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              {% for note in Client_.coach.notes %}
+                {% if note.Client == Client_ %}
+                  {% if note == Client_.coach.notes|last %}
+                    <div class="card mb-4 shadow-sm" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false">
+                      <div class="card-body">
+                        <h5 class="card-title"> 
+                          {{ note.Title }}
+                          {# Titre #}
+                      </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                          Note : 
+                        </h6>
+                        <p class="card-text">
+                          {{ note.Texte }}
+                          {# Text #}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div class="btn-group">
+                            <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_notes') }}">Voir plus...</a>
+                          </div>
+                          <small class="text-muted">{{ note.client.user.username }}</small>
+                          <small class="text-muted">{{  note.createdAt | date('d/m/Y') }} - {{  note.createdAt | date('H:i') }}</small>
+                          {# <small class="text-muted">Salut</small>
+                          <small class="text-muted">00:00:00 00/00/00</small> #}
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
         </div>
-        <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+  
+        <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 overflow-hidden">
+          <div class="my-3 p-3">
+            {% if app.user.Iscoach == 1 %}
+              {% for produit in produits %}
+                {% if produit == Coach_.produits|last %}
+                  <div class="card mb-4 shadow-sm">
+                    {% if produit.image.name %}
+                    <img class="bd-placeholder-img card-img-top"src="{{ asset('/uploads/'~produit.image.name) }}" alt="Image not Found"></img>
+                    {% else %}
+                    <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Aucune Image</text></svg>
+                    {% endif %}
+                    <div class="card-body">
+                      <p class="card-text">{{ produit.text}}</p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_produits') }}">Voir plus...</a>
+                        </div>
+                        <small class="text-muted">{{  produit.createdAt | date('d/m/Y') }} - {{  produit.createdAt | date('H:i') }}</small>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              {% for produit in Client_.coach.produits %}
+                {% if produit == Client_.coach.produits|last %}
+                  <div class="card mb-4 shadow-sm">
+                    {% if produit.image.name %}
+                    <img class="bd-placeholder-img card-img-top" src="{{ asset('/uploads/'~produit.image.name) }}" alt="Image not Found"></img>
+                    {% else %}
+                    <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Aucune Image</text></svg>
+                    {% endif %}
+                    <div class="card-body">
+                      <p class="card-text">{{ produit.text}}</p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_produits') }}">Voir plus...</a>
+                        </div>
+                        <small class="text-muted">{{  produit.createdAt | date('d/m/Y') }} - {{  produit.createdAt | date('H:i') }}</small>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
       </div>
-    </div>
     
     <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
       <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
@@ -147,15 +225,13 @@
           <h2 class="display-5">4eme Graphique</h2>
           <p class="lead">WOW ce graphique</p>
         </div>
-        <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
       </div>
 
-      <div class="bg-primary mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
-        <div class="my-3 py-3">
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+        <div class="my-3 p-3">
           <h2 class="display-5">5eme Graphique</h2>
           <p class="lead">WOW ce graphique</p>
         </div>
-        <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
       </div>
     </div>
   {% endif %}
