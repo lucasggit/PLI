@@ -83,25 +83,62 @@
   <p class="lead font-weight-normal">Les articles proposés par ton coach</p>
 </div>
 <div class="row">
-{% for produit in client.coach.produits %}
+  {% if client.coach == null %}
+
   <div class="col-md-4">
     <div class="card mb-4 shadow-sm">
-      {% if produit.image.name %}
-      <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{ asset('/uploads/'~produit.image.name) }}" alt="Image not Found"></img>
-      {% else %}
-      <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Aucune Image</text></svg>
-      {% endif %}
+      <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Pas encore de produit</text></svg>
       <div class="card-body">
-        <p class="card-text">{{ produit.text}}</p>
-        <div class="d-flex justify-content-between align-items-center">
+        <p class="card-text">Ici, vous pourrez voir les produits que votre coach publiera pour vous accompagner dans votre entrainement</p>
+        <p class="card-text">Vous n'avez pas encore de coach, songez à bien vous lier grâce à votre token, et à confirmer le mail qui vous a été envoyé. Besoin d'aide ?</p>
+        <p class="card-text">Besoin d'aide ? Cliquez ci-dessous, sur "Aide"</p> <div class="d-flex justify-content-between align-items-center">
           <div class="btn-group">
+            <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('ecoach_aide') }}">Aide</a>
           </div>
-          <small class="text-muted">{{  produit.createdAt | date('d/m/Y') }} - {{  produit.createdAt | date('H:i') }}</small>
         </div>
       </div>
     </div>
   </div>
-{% endfor %}
+  {% else %}
+
+    {% if client.coach.produits == null %}
+    <div class="col-md-4">
+      <div class="card mb-4 shadow-sm">
+        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Pas encore de produit</text></svg>
+        <div class="card-body">
+          <p class="card-text">Ici, vous pourrez voir les produits que votre coach publiera pour vous accompagner dans votre entrainement. Votre coach n'en a pas encore publiés.</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+              <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('ecoach_aide') }}">Aide</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}
+
+        {% for produit in client.coach.produits %}
+          <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+              {% if produit.image.name %}
+              <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{ asset('/uploads/'~produit.image.name) }}" alt="Image not Found"></img>
+              {% else %}
+              <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Aucune Image</text></svg>
+              {% endif %}
+              <div class="card-body">
+                <p class="card-text">{{ produit.text}}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="btn-group">
+                  </div>
+                  <small class="text-muted">{{  produit.createdAt | date('d/m/Y') }} - {{  produit.createdAt | date('H:i') }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+
+    {% endif %}
+  {% endif %}
 </div>
 {% endif %}
 {% endblock %}

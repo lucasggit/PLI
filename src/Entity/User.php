@@ -64,6 +64,11 @@ class User implements UserInterface
      */
     private $Iscoach;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\ConfirmMail", inversedBy="user", cascade={"persist", "remove"})
+     */
+    private $ConfirmMail;
+
     public function __construct()
     {
         $this->notes = new ArrayCollection();
@@ -169,6 +174,18 @@ class User implements UserInterface
     public function setIscoach(bool $Iscoach): self
     {
         $this->Iscoach = $Iscoach;
+
+        return $this;
+    }
+
+    public function getConfirmMail(): ?ConfirmMail
+    {
+        return $this->ConfirmMail;
+    }
+
+    public function setConfirmMail(?ConfirmMail $ConfirmMail): self
+    {
+        $this->ConfirmMail = $ConfirmMail;
 
         return $this;
     }

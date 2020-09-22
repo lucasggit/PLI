@@ -25,6 +25,16 @@ class EcoachController extends AbstractController
             'controller_name' => 'EcoachController',
         ]);
     }
+
+    /**
+     * @Route("/aide", name="ecoach_aide")
+     */
+    public function aide()
+    {
+        return $this->render('ecoach/aide.html.twig', [
+            'controller_name' => 'EcoachController',
+        ]);
+    }
     
     /**
      * @Route("/contact", name="contact")

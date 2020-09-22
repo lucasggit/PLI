@@ -16,16 +16,38 @@
                 <label>Votre adresse email :</label>
                 <label><strong>{{ app.user.email }}</strong></label><br>
                 {% if app.user.Iscoach == 1 %}
-                {{ form_start(form) }} 
+                    {% if app.user.ConfirmMail.isConfirm == 0 %}
+                        <label>Pour obtenir le droit d'ajouter des clients, il faut tout d'abord valider votre adresse mail ! <br> (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</label><br>
+                        {{ form_start(form1) }} 
 
-                {{ form_row(form.Client, {'label': 'Entrez la clef d\'un client ici :', 'attr':{'class': 'form-control'}}) }}
+                        {{ form_row(form1.Token, {'label': 'Entrez la clef reçu par mail :', 'attr':{'class': 'form-control'}}) }}
+                        
+                        <button class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);" type="submit">Confirmer</button>
+                        {{ form_end(form1) }}
+                    {% else %}
+                        {{ form_start(form) }} 
+
+                        {{ form_row(form.Client, {'label': 'Entrez la clef d\'un client ici :', 'attr':{'class': 'form-control'}}) }}
+                        
+                        <button class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);" type="submit">Ajouter un Client</button>
+                        {{ form_end(form) }}
+                    {% endif %}
+                {% else %}
+                {% if app.user.ConfirmMail.isConfirm == 0 %}
+                <label>Votre clef de lien :</label>
+                <label><strong>????????????????</strong></label><br>
+                <label>Pour obtenir votre Token, il faut tout d'abord valider votre adresse mail ! (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</label><br>
+                {{ form_start(form1) }} 
+
+                {{ form_row(form1.Token, {'label': 'Entrez la clef reçu par mail :', 'attr':{'class': 'form-control'}}) }}
                 
-                <button class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);" type="submit">Ajouter un Client</button>
-                {{ form_end(form) }}
+                <button class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);" type="submit">Confirmer</button>
+                {{ form_end(form1) }}
                 {% else %}
                 <label>Votre clef de lien :</label>
                 <label><strong>{{ Client_.link }}</strong></label><br>
                 <label>(Cette clef est personnelle. Vous pouvez fournir cette clef à votre coach pour vous lier.)</label><br>
+                {% endif %}
                 {% endif %}
                 
             </div><br>
@@ -39,9 +61,14 @@
                 {% endfor %}
             </div>
             {% else %}
-            <label>Voici votre Coach :</label><br>
-                <label><strong>{{ Client_.coach }}</strong></label>
-                <a href="/profil/delete_relation/{{Client_.coach.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
+                {% if Client_.coach == null %}
+                <label>Voici votre Coach :</label><br>
+                <label>Vous n'avez pas encore de coach, songez à bien vous lier grâce à votre token ci-dessus, et à confirmer le mail qui vous a été envoyé.</label>
+                {% else %}
+                    <label>Voici votre Coach :</label><br>
+                    <label><strong>{{ Client_.coach }}</strong></label>
+                    <a href="/profil/delete_relation/{{Client_.coach.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
+                {% endif %}
             {% endif %}
         </div>
         <div class="col"></div>

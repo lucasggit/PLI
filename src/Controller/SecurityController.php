@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use App\Entity\Coach;
+use App\Entity\ConfirmMail;
 use App\Entity\User;
 use App\Entity\Produits;
 use App\Entity\Images;
@@ -12,14 +13,19 @@ use App\Form\NotesType;
 use App\Form\UserType;
 use App\Manager\Manager;
 use App\Form\ProduitsType;
+use App\Repository\UserRepository;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Constraints\IsFalse;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mailer\MailerInterface;
+
 
 class SecurityController extends AbstractController
 {
@@ -65,7 +71,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/register", name="security_registration")
      */
-    public function registration(Request $request, Manager $Lemanager, UserPasswordEncoderInterface $encoder) {
+    public function registration(Request $request, Manager $Lemanager, UserPasswordEncoderInterface $encoder, \Swift_Mailer $mailer) {
 
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -80,14 +86,38 @@ class SecurityController extends AbstractController
             } else {
                 $client = new Client;
                 $Lemanager->addClient($client, $user);
-
             }
+            $ConfirmMail = new ConfirmMail;
+            $Lemanager->addConfirmMail($ConfirmMail, $user);
+            $Lemanager->editUserConf($user, $ConfirmMail);
+            $message = (new \Swift_Message('My_eCoach - Confirmez votre mail !'))
+                        ->setFrom('myecoach@service.com')
+                        ->setTo($user->getEmail())
+                        ->setBody($ConfirmMail->getToken()
+                        )
+                    ;
+            $mailer->send($message);
+            
             return $this->redirectToRoute('security_login');
         }
 
         return $this->render('security/registration.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/ConfirmMail/$id", name="security_ConfirmMail")
+     */
+    public function ConfirmMail(Request $request, Manager $Lemanager, UserPasswordEncoderInterface $encoder, int $id) {
+
+        $Userrepository = $this->getDoctrine()->getRepository(User::class);
+        $user = $Userrepository->findOneBy(['id' => $id]);
+        
+            
+            return $this->redirectToRoute('security_login');
+
+        return $this->render('security/ConfirmMail.html.twig');
     }
 
     /**
@@ -108,24 +138,44 @@ class SecurityController extends AbstractController
     /**
      * @Route("/profil", name="security_profil")
      */
-    public function profil(Request $request, Manager $manager): Response 
+    public function profil(Request $request, Manager $manager, \Swift_Mailer $mailer): Response 
     {
             $user=$this->get('security.token_storage')->getToken()->getUser();
             $this->denyAccessUnlessGranted('VIEW', $user);
         
             $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
             $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
-            
+            $ConfMailrepository = $this->getDoctrine()->getRepository(ConfirmMail::class);
             
             $coach = $Coachrepository->findOneBy(
             ['User' => $user]
             );
             $defaultData = ['message' => 'Clef de lien...'];
+            $defaultData1 = ['message' => 'Clef à 6 chiffres reçue par mail...'];
+            
             $form = $this->createFormBuilder($defaultData)
                         ->add('Client', TextType::class)
                         ->getForm();
 
             $form->handleRequest($request);
+
+            $form1 = $this->createFormBuilder($defaultData1)
+                        ->add('Token', TextType::class)
+                        ->getForm();
+
+            $form1->handleRequest($request);
+
+            if ($form1->isSubmitted() && $form1->isValid()) {
+                $data1 = $form1->get('Token')->getData();
+                $ConfirmMail = $ConfMailrepository->findOneBy(['id' => $user->getConfirmMail()->getId()]);
+                if ($data1 == $ConfirmMail->getToken()) {
+                    $ConfirmMail->setIsConfirm(1);
+                    $manager->editConfMail($ConfirmMail);
+                    return $this->redirectToRoute('security_profil');
+                } else {
+                    echo "<script>alert(\"Clef incorrect !\")</script>";
+                }
+            }
 
             if ($form->isSubmitted() && $form->isValid()) {
                 // data is an array with "name", "email", and "message" keys
@@ -138,8 +188,15 @@ class SecurityController extends AbstractController
                     $have_coach = $add_client->getCoach();
                     if (is_null($have_coach))
                     {
-                        $manager->addRelation($coach, $add_client);
-                        return $this->redirectToRoute('security_profil');
+                        $message = (new \Swift_Message('Hello Email'))
+                        ->setFrom('myecoach@service.com')
+                        ->setTo('clientx0x0@gmail.com')
+                        ->setBody("Proposer de payer l'abonnement, puis *lien pour valider ajouter le liene entre Coach/Client*. ")
+                    ;
+                
+                    $mailer->send($message);
+                    $manager->addRelation($coach, $add_client);
+                    return $this->redirectToRoute('security_profil');
                     } else {
                         echo "<script>alert(\"Ce client a déjà un Coach (max : 1)\")</script>";
                     }
@@ -153,6 +210,7 @@ class SecurityController extends AbstractController
 
             return $this->render('security/profil.html.twig', [
                 'form' => $form->createView(),
+                'form1' => $form1->createView(),
                 'Coach_' => $coach,
                 'Client_' => $client,
             ]);

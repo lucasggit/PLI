@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\Produits;
 use App\Entity\Clientele;
 use App\Entity\Coach;
+use App\Entity\ConfirmMail;
 use App\Entity\Images;
 use App\Entity\Notes;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,6 +21,7 @@ class Manager extends AbstractController
         $manager = $this->getDoctrine()->getManager();
         $hash = $encoder->encodePassword($user, $user->getPassword());
         $user->setPassword($hash);
+        $user->setConfirmMail(null);
         $user->setCreatedAt(new \DateTime());
         $this->created_at = new \DateTime();
         $this->updated_at = new \DateTime();
@@ -58,6 +60,12 @@ class Manager extends AbstractController
             $hash = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($hash);
                 $this->getDoctrine()->getManager()->flush();
+    }
+
+    public function editUserConf(User $user, ConfirmMail $ConfirmMail)
+    {
+            $user->setConfirmMail($ConfirmMail);
+            $this->getDoctrine()->getManager()->flush();
     }
 
     public function deleteUser(User $user)
@@ -137,6 +145,29 @@ class Manager extends AbstractController
         $note->setCreatedAt(new \DateTime());
         $this->created_at = new \DateTime();
         $this->updated_at = new \DateTime();
+        $this->getDoctrine()->getManager()->flush();
+    }
+
+    public function addConfirmMail(ConfirmMail $ConfirmMail, User $user) {
+
+        $manager = $this->getDoctrine()->getManager();
+        $ConfirmMail->setUser($user);
+        $ConfirmMail->setIsConfirm(false);
+        $length = 6;
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+            $randomString = '';
+            for ($i = 0; $i < $length; $i++) {
+                $randomString .= $characters[rand(0, $charactersLength - 1)];
+            }
+        $ConfirmMail->setToken($randomString);
+        $manager->persist($ConfirmMail);
+        $manager->flush();
+    }
+
+    public function editConfMail(ConfirmMail $ConfirmMail) {
+
+        $ConfirmMail->setIsConfirm(true);
         $this->getDoctrine()->getManager()->flush();
     }
 
