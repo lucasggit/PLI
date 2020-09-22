@@ -5,8 +5,8 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         in_memory: { memory: ~ }
-        in_database: 
-            entity: 
+        in_database:
+            entity:
                 class: App\Entity\User
                 property: email
 
@@ -19,7 +19,7 @@ security:
 
             provider: in_database
 
-            form_login: 
+            form_login:
                 login_path: security_login
                 check_path: security_login
                 default_target_path: index
