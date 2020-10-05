@@ -22,6 +22,15 @@ public/uploads/
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 
+<<<<<<< HEAD
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
+=======
 composer.json
 
 composer.lock
+>>>>>>> 9f2104c04350414a4766fa4b59a3d06ddbdf16ae

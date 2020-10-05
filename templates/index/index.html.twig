@@ -8,6 +8,8 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
+<div id="app"></div>
+
 <div class="example-wrapper">
     <h1>Hello {{ controller_name }}! ✅</h1>
 
@@ -17,4 +19,8 @@
         <li>Your template at <code><a href="{{ '/home/gw01/Etna/PLI/templates/index/index.html.twig'|file_link(0) }}">templates/index/index.html.twig</a></code></li>
     </ul>
 </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ encore_entry_script_tags('app') }}
 {% endblock %}
