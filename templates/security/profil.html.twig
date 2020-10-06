@@ -1,23 +1,34 @@
 {% extends 'base.html.twig' %}
     {% block title %}Profil de {{ app.user.username }}{% endblock %}
     {% block body %}
-        
-    
-
-    <profil>
-        <div class="row">
-            <div class="col">
-            <h2>{{ app.user.username }}</h2>
-            {% if app.user.Iscoach == 1 %}
-                <label><strong>Vous êtes un Coach</strong></label><br>
+        <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+            <div class="col-md-5 p-lg-5 mx-auto my-5">
+                <h1 class="display-4 font-weight-normal">Bienvenue {{ app.user.username }}</h1>
+                <p class="lead font-weight-normal">Membre depuis le {{  app.user.createdAt | date('d/m/Y') }} à {{  app.user.createdAt | date('H:i') }}</p><br>
+                <p class="lead font-weight-normal">{% if app.user.Iscoach == 1 %}
+                    Vous êtes un Coach
+                    {% endif %}</p>
+                    {# <p class="lead font-weight-normal">Nom d'utilisateur : {{ app.user.username }}</p> #}
+                <p class="lead font-weight-normal">Adresse email : {{ app.user.email }}</p>
+                    
+                {% if app.user.Iscoach == 1 %}
+                    <br><div>
+                        <p class="lead font-weight-normal">Voici vos clients :</p>
+                        {% for client in Coach_.clients %}
+                        <p class="lead font-weight-normal"><strong>{{ client.user.username }}</strong> - <a href="/profil/delete_relation/{{client.id}}" class="btn btn-outline-secondary">Dissocier</a></p>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {% if Client_.coach == null %}
+                        <p class="lead font-weight-normal">Voici votre Coach :</p><br>
+                        <p class="lead font-weight-normal">Vous n'avez pas encore de coach, songez à bien vous lier grâce à votre token ci-dessus, et à confirmer le mail qui vous a été envoyé.</p>
+                    {% else %}
+                    <p class="lead font-weight-normal">Voici votre Coach : <strong>{{ Client_.coach }}</strong> - <a href="/profil/delete_relation/{{Client_.coach.id}}" class="btn btn-outline-secondary">Dissocier</a></p>
+                    {% endif %}
                 {% endif %}
-            <div class="metadata">Membre depuis le {{  app.user.createdAt | date('d/m/Y') }} à {{  app.user.createdAt | date('H:i') }}</div><br>
-            <div class="content">
-                <label>Votre adresse email :</label>
-                <label><strong>{{ app.user.email }}</strong></label><br>
                 {% if app.user.Iscoach == 1 %}
                     {% if app.user.ConfirmMail.isConfirm == 0 %}
-                        <label>Pour obtenir le droit d'ajouter des clients, il faut tout d'abord valider votre adresse mail ! <br> (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</label><br>
+                    <p class="lead font-weight-normal">Pour obtenir le droit d'ajouter des clients, il faut tout d'abord valider votre adresse mail ! <br> (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</p><br>
                         {{ form_start(form1) }} 
 
                         {{ form_row(form1.Token, {'label': 'Entrez la clef reçu par mail :', 'attr':{'class': 'form-control'}}) }}
@@ -27,51 +38,27 @@
                     {% else %}
                         {{ form_start(form) }} 
 
-                        {{ form_row(form.Client, {'label': 'Entrez la clef d\'un client ici :', 'attr':{'class': 'form-control'}}) }}
+                        {{ form_row(form.Client, {'label': ' ', 'attr':{'class': 'form-control', 'placeholder': 'Clef du client...'}}) }}
                         
                         <button class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);" type="submit">Ajouter un Client</button>
                         {{ form_end(form) }}
                     {% endif %}
                 {% else %}
-                {% if app.user.ConfirmMail.isConfirm == 0 %}
-                <label>Votre clef de lien :</label>
-                <label><strong>????????????????</strong></label><br>
-                <label>Pour obtenir votre Token, il faut tout d'abord valider votre adresse mail ! (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</label><br>
-                {{ form_start(form1) }} 
+                    {% if app.user.ConfirmMail.isConfirm == 0 %}
+                        <p class="lead font-weight-normal">Votre clef de lien : ????????????????</label><br>
+                        <p class="lead font-weight-normal">Pour obtenir votre Token, il faut tout d'abord valider votre adresse mail ! (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</p><br>
+                        {{ form_start(form1) }} 
 
-                {{ form_row(form1.Token, {'label': 'Entrez la clef reçu par mail :', 'attr':{'class': 'form-control'}}) }}
-                
-                <button class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);" type="submit">Confirmer</button>
-                {{ form_end(form1) }}
-                {% else %}
-                <label>Votre clef de lien :</label>
-                <label><strong>{{ Client_.link }}</strong></label><br>
-                <label>(Cette clef est personnelle. Vous pouvez fournir cette clef à votre coach pour vous lier.)</label><br>
+                        {{ form_row(form1.Token, {'label': 'Entrez la clef reçu par mail :', 'attr':{'class': 'form-control'}}) }}
+                        
+                        <button class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);" type="submit">Confirmer</button>
+                        {{ form_end(form1) }}
+                    {% else %}
+                    <p class="lead font-weight-normal">Votre clef de lien : <strong>{{ Client_.link }}</strong></p>
+                    <p class="lead font-weight-normal">(Cette clef est personnelle. Vous pouvez fournir cette clef à votre coach pour vous lier.)</p><br>
+                    {% endif %}
                 {% endif %}
-                {% endif %}
-                
-            </div><br>
-            <a href="{{ path('security_editprofil') }}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Editer mon profil</a><br><br>
-            {% if app.user.Iscoach == 1 %}
-            <div>
-                <label>Voici vos clients :</label><br>
-                {% for client in Coach_.clients %}
-                <label><strong>{{ client.user.username }}</strong></label>
-                <a href="/profil/delete_relation/{{client.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
-                {% endfor %}
+                <br><a class="btn btn-outline-secondary" href="{{ path('security_editprofil') }}">Editer mon profil</a>
             </div>
-            {% else %}
-                {% if Client_.coach == null %}
-                <label>Voici votre Coach :</label><br>
-                <label>Vous n'avez pas encore de coach, songez à bien vous lier grâce à votre token ci-dessus, et à confirmer le mail qui vous a été envoyé.</label>
-                {% else %}
-                    <label>Voici votre Coach :</label><br>
-                    <label><strong>{{ Client_.coach }}</strong></label>
-                    <a href="/profil/delete_relation/{{Client_.coach.id}}" class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Dissocier</a><br>
-                {% endif %}
-            {% endif %}
         </div>
-        <div class="col"></div>
-        </div>
-    </profil>
     {% endblock %}
