@@ -74,6 +74,12 @@ class User implements UserInterface
      */
     private $Iscoach;
 
+    /**
+     * @ORM\OneToOne(targetEntity=ConfirmMail::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $confirmMail;
+
+
     public function __construct()
     {
         $this->notes = new ArrayCollection();
@@ -242,6 +248,23 @@ class User implements UserInterface
             if ($message->getUser() === $this) {
                 $message->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getConfirmMail(): ?ConfirmMail
+    {
+        return $this->confirmMail;
+    }
+
+    public function setConfirmMail(ConfirmMail $confirmMail): self
+    {
+        $this->confirmMail = $confirmMail;
+
+        // set the owning side of the relation if necessary
+        if ($confirmMail->getUser() !== $this) {
+            $confirmMail->setUser($this);
         }
 
         return $this;

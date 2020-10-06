@@ -22,7 +22,6 @@ public/uploads/
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 
-<<<<<<< HEAD
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 #/public/build/

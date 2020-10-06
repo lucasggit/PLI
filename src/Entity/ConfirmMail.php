@@ -27,7 +27,8 @@ class ConfirmMail
     private $token;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\User", mappedBy="ConfirmMail", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=User::class, inversedBy="confirmMail", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      */
     private $user;
 
@@ -65,15 +66,9 @@ class ConfirmMail
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
-
-        // set (or unset) the owning side of the relation if necessary
-        $newConfirmMail = null === $user ? null : $this;
-        if ($user->getConfirmMail() !== $newConfirmMail) {
-            $user->setConfirmMail($newConfirmMail);
-        }
 
         return $this;
     }

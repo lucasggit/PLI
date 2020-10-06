@@ -146,7 +146,6 @@ class SecurityController extends AbstractController
             $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
             $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
             $ConfMailrepository = $this->getDoctrine()->getRepository(ConfirmMail::class);
-            
             $coach = $Coachrepository->findOneBy(
             ['User' => $user]
             );

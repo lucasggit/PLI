@@ -15,9 +15,6 @@ return [
     Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class => ['all' => true],
     Symfony\Bundle\WebServerBundle\WebServerBundle::class => ['dev' => true],
     Symfony\Bundle\MercureBundle\MercureBundle::class => ['all' => true],
-<<<<<<< HEAD
     Symfony\WebpackEncoreBundle\WebpackEncoreBundle::class => ['all' => true],
-=======
     Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle::class => ['all' => true],
->>>>>>> 9f2104c04350414a4766fa4b59a3d06ddbdf16ae
 ];
