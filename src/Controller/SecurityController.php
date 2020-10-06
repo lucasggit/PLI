@@ -79,7 +79,7 @@ class SecurityController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()) {
             $iscoach = $form->get('Iscoach')->getData();
-            $Lemanager->addUser($user, $encoder);
+            
             if($iscoach == true) {
                 $coach = new Coach;
                 $Lemanager->addCoach($coach, $user);
@@ -88,6 +88,7 @@ class SecurityController extends AbstractController
                 $Lemanager->addClient($client, $user);
             }
             $ConfirmMail = new ConfirmMail;
+            $Lemanager->addUser($user, $encoder, $ConfirmMail);
             $Lemanager->addConfirmMail($ConfirmMail, $user);
             $Lemanager->editUserConf($user, $ConfirmMail);
             $message = (new \Swift_Message('My_eCoach - Confirmez votre mail !'))

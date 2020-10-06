@@ -16,12 +16,12 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class Manager extends AbstractController
 {
 
-    public function addUser(User $user,UserPasswordEncoderInterface $encoder) {
+    public function addUser(User $user,UserPasswordEncoderInterface $encoder, ConfirmMail $confirmMail) {
 
         $manager = $this->getDoctrine()->getManager();
         $hash = $encoder->encodePassword($user, $user->getPassword());
         $user->setPassword($hash);
-        $user->setConfirmMail(null);
+        $user->setConfirmMail($confirmMail);
         $user->setCreatedAt(new \DateTime());
         $this->created_at = new \DateTime();
         $this->updated_at = new \DateTime();
