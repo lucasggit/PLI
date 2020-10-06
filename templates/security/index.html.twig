@@ -107,34 +107,55 @@
       <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 overflow-hidden">
         <div class="my-3 p-3">
           {% if app.user.Iscoach == 1 %}
-            {% for note in Coach_.notes %}
-              {% if note == Coach_.notes|last %}
-                <div class="card mb-4 shadow-sm" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false">
-                  <div class="card-body">
-                    <h5 class="card-title"> 
-                      {{ note.Title }}
-                      {# Titre #}
-                    </h5>
-                    <h6 class="card-subtitle mb-2 text-muted">
-                      Note : 
-                    </h6>
-                    <p class="card-text">
-                      {{ note.Texte|nl2br }}
-                      {# Text #}
-                    </p>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <div class="btn-group">
-                        <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_notes') }}">Voir plus...</a>
+            {% if Coach_.notes|length > 0 %}
+              {% for note in Coach_.notes %}
+                {% if note == Coach_.notes|last %}
+                  <div class="card mb-4 shadow-sm" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false">
+                    <div class="card-body">
+                      <h5 class="card-title"> 
+                        {{ note.Title }}
+                        {# Titre #}
+                      </h5>
+                      <h6 class="card-subtitle mb-2 text-muted">
+                        Note : 
+                      </h6>
+                      <p class="card-text">
+                        {{ note.Texte|nl2br }}
+                        {# Text #}
+                      </p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_notes') }}">Voir plus...</a>
+                        </div>
+                        <small class="text-muted">{{ note.client.user.username }}</small>
+                        <small class="text-muted">{{  note.createdAt | date('d/m/Y') }} - {{  note.createdAt | date('H:i') }}</small>
+                        {# <small class="text-muted">Salut</small>
+                        <small class="text-muted">00:00:00 00/00/00</small> #}
                       </div>
-                      <small class="text-muted">{{ note.client.user.username }}</small>
-                      <small class="text-muted">{{  note.createdAt | date('d/m/Y') }} - {{  note.createdAt | date('H:i') }}</small>
-                      {# <small class="text-muted">Salut</small>
-                      <small class="text-muted">00:00:00 00/00/00</small> #}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              <div class="card mb-4 shadow-sm" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false">
+                <div class="card-body">
+                  <h5 class="card-title"> 
+                    Les notes !
+                  </h5>
+                  <p class="card-text">Ici, vous pourrez la dernière note rédigée pour votre client concernant ses séances. Vous n'avez encore rien publié.</p>
+                  {% if Coach_.Clients|length > 0 %}
+                  <p class="card-text">Vous n'avez pas encore de clients, songez à bien vous lier grâce au <a style="text-decoration: none;" href="{{ path('security_profil') }}"><strong>token</strong></a> du client.</p>
+                  {% endif %}
+                  <p class="card-text">Besoin d'aide ? Cliquez ci-dessous, sur "Aide"</p>
+                  
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('ecoach_aide') }}">Aide</a>
                     </div>
                   </div>
                 </div>
-              {% endif %}
-            {% endfor %}
+              </div>
+            {% endif %}
           {% else %}
             {% if Client_.coach == null %}
           
@@ -155,7 +176,7 @@
               </div>
 
             {% else %}
-              {% if Client_.coach.notes == null %}
+              {% if Client_.coach.notes|length < 1 %}
             
                 <div class="card mb-4 shadow-sm" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false">
                   <div class="card-body">
@@ -213,33 +234,48 @@
         <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 overflow-hidden">
           <div class="my-3 p-3">
             {% if app.user.Iscoach == 1 %}
-              {% for produit in produits %}
-                {% if produit == Coach_.produits|last %}
-                  <div class="card mb-4 shadow-sm">
-                    {% if produit.image.name %}
-                    <img class="bd-placeholder-img card-img-top"src="{{ asset('/uploads/'~produit.image.name) }}" alt="Image not Found"></img>
-                    {% else %}
-                    <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Aucune Image</text></svg>
-                    {% endif %}
-                    <div class="card-body">
-                      <p class="card-text">{{ produit.text|nl2br }}</p>
-                      <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
-                          <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_produits') }}">Voir plus...</a>
+              {% if Coach_.produits|length > 0 %}
+                {% for produit in produits %}
+                  {% if produit == Coach_.produits|last %}
+                    <div class="card mb-4 shadow-sm">
+                      {% if produit.image.name %}
+                      <img class="bd-placeholder-img card-img-top"src="{{ asset('/uploads/'~produit.image.name) }}" alt="Image not Found"></img>
+                      {% else %}
+                      <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Aucune Image</text></svg>
+                      {% endif %}
+                      <div class="card-body">
+                        <p class="card-text">{{ produit.text|nl2br }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div class="btn-group">
+                            <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_produits') }}">Voir plus...</a>
+                          </div>
+                          <small class="text-muted">{{  produit.createdAt | date('d/m/Y') }} - {{  produit.createdAt | date('H:i') }}</small>
                         </div>
-                        <small class="text-muted">{{  produit.createdAt | date('d/m/Y') }} - {{  produit.createdAt | date('H:i') }}</small>
                       </div>
                     </div>
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+              <div class="card mb-4 shadow-sm">
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Pas encore de produit</text></svg>
+                <div class="card-body">
+                  <p class="card-text">Ici, vous pourrez voir le dernier produit que vous publierez, pour accompagner l'entrainement de vos clients. Vous n'avez pas encore publié de produits</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_produits') }}">Publier un produit</a>
+                    </div>
                   </div>
-                {% endif %}
-              {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+              
             {% else %}
               {% if Client_.coach == null %}
                 <div class="card mb-4 shadow-sm">
                   <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Pas encore de produit</text></svg>
                   <div class="card-body">
                     <p class="card-text">Ici, vous pourrez voir les produits que votre coach publiera pour vous accompagner dans votre entrainement</p>
-                    <p class="card-text">Vous n'avez pas encore de coach, songez à bien vous lier grâce à votre token, et à confirmer le mail qui vous a été envoyé. Besoin d'aide ?</p>
+                    <p class="card-text">Vous n'avez pas encore de coach, songez à bien vous lier grâce à votre <a style="text-decoration: none;" href="{{ path('security_profil') }}"><strong>token</strong></a>, et à confirmer le mail qui vous a été envoyé. Besoin d'aide ?</p>
                     <p class="card-text">Besoin d'aide ? Cliquez ci-dessous, sur "Aide"</p>
                     <div class="d-flex justify-content-between align-items-center">
                       <div class="btn-group">
@@ -250,7 +286,7 @@
                 </div>
               {% else %}
 
-                {% if Client_.coach.produits == null %}
+                {% if Client_.coach.produits|length < 1 %}
                   <div class="card mb-4 shadow-sm">
                     <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Pas encore de produit</text></svg>
                     <div class="card-body">

@@ -36,7 +36,8 @@ class Manager extends AbstractController
         $confirmMail->setToken($randomString);
         
 
-        $manager->persist($user, $confirmMail);
+        $manager->persist($user);
+        $manager->persist($confirmMail);
         $manager->flush();
     }
 
