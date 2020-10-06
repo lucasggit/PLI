@@ -75,7 +75,7 @@ class User implements UserInterface
     private $Iscoach;
 
     /**
-     * @ORM\OneToOne(targetEntity=App\Entity\ConfirmMail, mappedBy="User", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="App\Entity\ConfirmMail", mappedBy="User", cascade={"persist", "remove"})
      */
     private $confirmMail;
 
