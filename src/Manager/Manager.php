@@ -21,10 +21,11 @@ class Manager extends AbstractController
         $manager = $this->getDoctrine()->getManager();
         $hash = $encoder->encodePassword($user, $user->getPassword());
         $user->setPassword($hash);
-        $user->setConfirmMail($confirmMail);
         $user->setCreatedAt(new \DateTime());
         $this->created_at = new \DateTime();
         $this->updated_at = new \DateTime();
+        $user->setConfirmMail($confirmMail);
+        
 
         $manager->persist($user);
         $manager->flush();
