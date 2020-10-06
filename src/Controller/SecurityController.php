@@ -80,7 +80,7 @@ class SecurityController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()) {
             $Lemanager->addUser($user, $encoder, $ConfirmMail);
-            $Lemanager->addConfirmMail($ConfirmMail, $user);
+            // $Lemanager->addConfirmMail($ConfirmMail, $user);
             $iscoach = $form->get('Iscoach')->getData();
             if($iscoach == true) {
                 $coach = new Coach;

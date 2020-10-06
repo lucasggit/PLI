@@ -21,14 +21,22 @@ class Manager extends AbstractController
         $manager = $this->getDoctrine()->getManager();
         $hash = $encoder->encodePassword($user, $user->getPassword());
         $user->setPassword($hash);
-        $user->setConfirmMail($confirmMail);
         $user->setCreatedAt(new \DateTime());
         $this->created_at = new \DateTime();
         $this->updated_at = new \DateTime();
-        
+        $confirmMail->setUser($user);
+        $confirmMail->setIsConfirm(false);
+        $length = 6;
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+            $randomString = '';
+            for ($i = 0; $i < $length; $i++) {
+                $randomString .= $characters[rand(0, $charactersLength - 1)];
+            }
+        $confirmMail->setToken($randomString);
         
 
-        $manager->persist($user);
+        $manager->persist($user, $confirmMail);
         $manager->flush();
     }
 
