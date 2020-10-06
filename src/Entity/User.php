@@ -75,7 +75,7 @@ class User implements UserInterface
     private $Iscoach;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\ConfirmMail", mappedBy="user", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=App\Entity\ConfirmMail, mappedBy="User", cascade={"persist", "remove"})
      */
     private $confirmMail;
 
@@ -258,13 +258,14 @@ class User implements UserInterface
         return $this->confirmMail;
     }
 
-    public function setConfirmMail(ConfirmMail $confirmMail): self
+    public function setConfirmMail(?ConfirmMail $confirmMail): self
     {
         $this->confirmMail = $confirmMail;
 
-        // set the owning side of the relation if necessary
-        if ($confirmMail->getUser() !== $this) {
-            $confirmMail->setUser($this);
+        // set (or unset) the owning side of the relation if necessary
+        $newUser = null === $confirmMail ? null : $this;
+        if ($confirmMail->getUser() !== $newUser) {
+            $confirmMail->setUser($newUser);
         }
 
         return $this;

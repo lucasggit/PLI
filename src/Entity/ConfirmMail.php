@@ -28,9 +28,9 @@ class ConfirmMail
 
     /**
      * @ORM\OneToOne(targetEntity=User::class, inversedBy="confirmMail", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      */
-    private $user;
+    private $User;
+
 
     public function getId(): ?int
     {
@@ -63,12 +63,12 @@ class ConfirmMail
 
     public function getUser(): ?User
     {
-        return $this->user;
+        return $this->User;
     }
 
-    public function setUser(User $user): self
+    public function setUser(?User $User): self
     {
-        $this->user = $user;
+        $this->User = $User;
 
         return $this;
     }
