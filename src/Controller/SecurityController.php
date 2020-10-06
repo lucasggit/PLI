@@ -74,12 +74,14 @@ class SecurityController extends AbstractController
     public function registration(Request $request, Manager $Lemanager, UserPasswordEncoderInterface $encoder, \Swift_Mailer $mailer) {
 
         $user = new User();
+        $ConfirmMail = new ConfirmMail;
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+            $Lemanager->addUser($user, $encoder, $ConfirmMail);
+            $Lemanager->addConfirmMail($ConfirmMail, $user);
             $iscoach = $form->get('Iscoach')->getData();
-            
             if($iscoach == true) {
                 $coach = new Coach;
                 $Lemanager->addCoach($coach, $user);
@@ -87,9 +89,7 @@ class SecurityController extends AbstractController
                 $client = new Client;
                 $Lemanager->addClient($client, $user);
             }
-            $ConfirmMail = new ConfirmMail;
-            $Lemanager->addUser($user, $encoder, $ConfirmMail);
-            $Lemanager->addConfirmMail($ConfirmMail, $user);
+            
             $Lemanager->editUserConf($user, $ConfirmMail);
             $message = (new \Swift_Message('My_eCoach - Confirmez votre mail !'))
                         ->setFrom('myecoach@service.com')
