@@ -73,16 +73,18 @@ class Manager extends AbstractController
                 $this->getDoctrine()->getManager()->flush();
     }
 
+    public function delUser(User $user, Client $client)
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $manager->remove($client);
+        $manager->remove($user);
+        $manager->flush();
+    }
+
     public function editUserConf(User $user, ConfirmMail $ConfirmMail)
     {
             $user->setConfirmMail($ConfirmMail);
             $this->getDoctrine()->getManager()->flush();
-    }
-
-    public function deleteUser(User $user)
-    {
-        $this->objectManager->remove($user);
-        $this->objectManager->flush();
     }
 
     public function addProduit(Produits $Produits, Coach $coach, Images $image) {

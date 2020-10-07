@@ -35,7 +35,7 @@ class Client
     private $coach;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Notes", mappedBy="Client")
+     * @ORM\OneToMany(targetEntity="App\Entity\Notes", mappedBy="Client", cascade={"persist", "remove"})
      */
     private $notes;
 

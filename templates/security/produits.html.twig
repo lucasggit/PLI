@@ -28,7 +28,7 @@
 <div class="col-md-5 p-lg-5 mx-auto my-5">
   <h1 class="display-4 font-weight-normal">Les produits</h1>
   {% if app.user.Iscoach == true %}
-  <p class="lead font-weight-normal">Personnalisez vos produits</p>
+  <p class="lead text-muted">Personnalisez vos produits</p>
 </div>
 {{ form_start(form) }}
 <div class="row">
@@ -80,7 +80,7 @@
 </div>
 
 {% else %}
-  <p class="lead font-weight-normal">Les articles proposés par ton coach</p>
+  <p class="lead text-muted">Les articles proposés par ton coach</p>
 </div>
 <div class="row">
   {% if client.coach == null %}

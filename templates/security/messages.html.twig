@@ -6,9 +6,9 @@
 <div class="col-md-5 p-lg-5 mx-auto my-5">
   <h1 class="display-4 font-weight-normal">Les messages</h1>
   {% if app.user.Iscoach == true %}
-  <p class="lead font-weight-normal">Envoyer des messages à vos client</p>
+  <p class="lead text-muted">Envoyer des messages à vos clients</p>
   {% else %}
-  <p class="lead font-weight-normal">Envoyer des messages à votre coach</p>
+  <p class="lead text-muted">Envoyer des messages à votre coach</p>
   {% endif %}
 </div>
 <div id="app" data-username="{{ app.user.username }}"></div>

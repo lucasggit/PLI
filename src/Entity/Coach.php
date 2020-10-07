@@ -24,12 +24,12 @@ class Coach
     private $User;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Notes", mappedBy="Coach")
+     * @ORM\OneToMany(targetEntity="App\Entity\Notes", mappedBy="Coach", cascade={"persist", "remove"})
      */
     private $notes;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Produits", mappedBy="Coach")
+     * @ORM\OneToMany(targetEntity="App\Entity\Produits", mappedBy="Coach", cascade={"persist", "remove"})
      */
     private $produits;
 

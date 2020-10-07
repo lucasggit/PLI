@@ -3,8 +3,8 @@
     {% block body %}
         <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
             <div class="col-md-5 p-lg-5 mx-auto my-5">
-                <h1 class="display-4 font-weight-normal">Bienvenue {{ app.user.username }}</h1>
-                <p class="lead font-weight-normal">Membre depuis le {{  app.user.createdAt | date('d/m/Y') }} à {{  app.user.createdAt | date('H:i') }}</p><br>
+                <h1 class="display-4 font-weight-normal">Bienvenue <br>{{ app.user.username }}</h1>
+                <p class="lead text-muted">Membre depuis le {{  app.user.createdAt | date('d/m/Y') }} à {{  app.user.createdAt | date('H:i') }}</p><br>
                 <p class="lead font-weight-normal">{% if app.user.Iscoach == 1 %}
                     Vous êtes un Coach
                     {% endif %}</p>
@@ -13,22 +13,28 @@
                     
                 {% if app.user.Iscoach == 1 %}
                     <br><div>
+                        {% if Coach_.clients|length < 1 %}
                         <p class="lead font-weight-normal">Voici vos clients :</p>
-                        {% for client in Coach_.clients %}
-                        <p class="lead font-weight-normal"><strong>{{ client.user.username }}</strong> - <a href="/profil/delete_relation/{{client.id}}" class="btn btn-outline-secondary">Dissocier</a></p>
-                        {% endfor %}
+                        <p class="lead text-muted">Vous n'avez pas encore de client, songez à bien vous lier grâce au token de celui. Vous pouvez le saisir ci-dessous.</p>
+                        {% else %}
+                        <p class="lead text-muted">Voici vos clients :</p>
+                            {% for client in Coach_.clients %}
+                            <p class="lead font-weight-normal">{{ client.user.username }} - <a href="/profil/delete_relation/{{client.id}}" class="btn btn-outline-secondary">Dissocier</a></p>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 {% else %}
                     {% if Client_.coach == null %}
-                        <p class="lead font-weight-normal">Voici votre Coach :</p><br>
-                        <p class="lead font-weight-normal">Vous n'avez pas encore de coach, songez à bien vous lier grâce à votre token ci-dessus, et à confirmer le mail qui vous a été envoyé.</p>
+                        <p class="lead font-weight-normal">Voici votre Coach :</p>
+                        <p class="lead text-muted">Vous n'avez pas encore de coach, songez à bien vous lier grâce à votre token ci-dessous, et à confirmer le mail qui vous a été envoyé.</p><br>
                     {% else %}
-                    <p class="lead font-weight-normal">Voici votre Coach : <strong>{{ Client_.coach }}</strong> - <a href="/profil/delete_relation/{{Client_.coach.id}}" class="btn btn-outline-secondary">Dissocier</a></p>
+                    <p class="lead text-muted">Voici votre Coach : </p>
+                    <p class="lead font-weight-normal">{{ Client_.coach }} - <a href="/profil/delete_relation/{{Client_.coach.id}}" class="btn btn-outline-secondary">Dissocier</a></p>
                     {% endif %}
                 {% endif %}
                 {% if app.user.Iscoach == 1 %}
                     {% if app.user.ConfirmMail.isConfirm == 0 %}
-                    <p class="lead font-weight-normal">Pour obtenir le droit d'ajouter des clients, il faut tout d'abord valider votre adresse mail ! <br> (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</p><br>
+                    <p class="lead text-muted">Pour obtenir le droit d'ajouter des clients, il faut tout d'abord valider votre adresse mail ! <br> (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</p><br>
                         {{ form_start(form1) }} 
 
                         {{ form_row(form1.Token, {'label': 'Entrez la clef reçu par mail :', 'attr':{'class': 'form-control'}}) }}
@@ -45,8 +51,8 @@
                     {% endif %}
                 {% else %}
                     {% if app.user.ConfirmMail.isConfirm == 0 %}
-                        <p class="lead font-weight-normal">Votre clef de lien : ????????????????</label><br>
-                        <p class="lead font-weight-normal">Pour obtenir votre Token, il faut tout d'abord valider votre adresse mail ! (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</p><br>
+                        <p class="lead font-weight-normal">Votre clef de lien : <p class="lead font-weight-normal">????????????????</p></p><br>
+                            <p class="lead text-muted">Pour obtenir votre Token, il faut tout d'abord valider votre adresse mail ! (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</p><br>
                         {{ form_start(form1) }} 
 
                         {{ form_row(form1.Token, {'label': 'Entrez la clef reçu par mail :', 'attr':{'class': 'form-control'}}) }}
@@ -54,11 +60,25 @@
                         <button class="btn btn-sm btn-primary btn" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);" type="submit">Confirmer</button>
                         {{ form_end(form1) }}
                     {% else %}
-                    <p class="lead font-weight-normal">Votre clef de lien : <strong>{{ Client_.link }}</strong></p>
-                    <p class="lead font-weight-normal">(Cette clef est personnelle. Vous pouvez fournir cette clef à votre coach pour vous lier.)</p><br>
+                    <p class="lead text-muted">Votre clef de lien : <p class="lead font-weight-normal">{{ Client_.link }}</p></p>
+                    <p class="lead text-muted">(Cette clef est personnelle. Vous pouvez fournir cette clef à votre coach pour vous lier.)</p><br>
                     {% endif %}
                 {% endif %}
-                <br><a class="btn btn-outline-secondary" href="{{ path('security_editprofil') }}">Editer mon profil</a>
+                <br><a class="btn btn-outline-secondary" href="{{ path('security_editprofil') }}">Editer mon profil</a>    
+                <script>
+                    function deleteUser() {
+                        var ask = window.confirm("Vous êtes sur le point de vous désinscrire. Si vous ne pensez jamais réutiliser My-Ecoach et souhaitez effacer complètement votre compte, nous pouvons nous en charger. Rappelez-vous cependant que vous ne pourrez ni réactiver votre compte ni récupérer son contenu ou ses informations.\n\n{% if app.user.Iscoach == 1 %} Vous êtes répertorié comme le coach de {{ Coach_.clients|length }} clients. La suppression définitive de votre compte entraînera celle de cette clientèle.{% else %}{% if Client_.coach == null %}Vous n'avez pas de coach, avez-vous eu des soucis lors de l'utilisation de My-Ecoach ? Faites vos retours dans l'onglet Support{% else %}Vous êtes répertorié comme le client de {{ Client_.coach }}. La suppression définitive de votre compte entraînera celle de votre relation avec ce coach.{% endif %}{% endif %}\n\nSi vous souhaitez tout de même supprimer votre compte, cliquez sur OK.");
+                        if (ask) {
+                            window.alert("This post was successfully deleted.");
+                    
+                            window.location.href = "{{ path('security_delUser') }}";
+                    
+                        }
+                    }
+                </script>
+                
+                <br><br><a class="btn btn-outline-secondary" href="{{ path('security_logout') }}">Déconnexion</a>
+                <br><br><button class="btn btn-outline-secondary" onclick="deleteUser()">Se désinscrire</button>
             </div>
         </div>
     {% endblock %}

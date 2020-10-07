@@ -13,18 +13,13 @@ use App\Form\NotesType;
 use App\Form\UserType;
 use App\Manager\Manager;
 use App\Form\ProduitsType;
-use App\Repository\UserRepository;
-use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Validator\Constraints\IsFalse;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 
 class SecurityController extends AbstractController
@@ -240,6 +235,37 @@ class SecurityController extends AbstractController
             'form' => $form->createView(),
             'user' => $user
         ]);
+    }
+
+    /**
+    * @Route("/profil/delete", name="security_delUser")
+    */
+    public function delete_user(Request $request, Manager $manager)
+    {
+        $user=$this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('VIEW', $user);
+
+        $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
+        $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
+
+        if ($user->getIsCoach() == 1) {
+            $coach = $Coachrepository->findOneBy([
+                'User' => $user,
+            ]);
+            $manager->delUser($user, $coach);
+        } else {
+            $client = $Clientrepository->findOneBy([
+                'User' => $user,
+            ]);
+            $manager->delUser($user, $client);
+            }
+        
+            $session = new Session();
+            $session->invalidate();
+         
+            return $this->redirectToRoute('index');
+
+       
     }
 
     /**

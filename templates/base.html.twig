@@ -6,6 +6,7 @@
         <!-- CSS only -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
         <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+        <!-- <link rel="stylesheet" href="{{ asset('css/second.css') }}"> -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
         <!-- JS, Popper.js, and jQuery -->
@@ -109,7 +110,6 @@
           <a class="py-2 d-none d-md-inline-block" href="{{ path('contact') }}">Contact</a>
         {% else %}
           <a class="py-2 d-none d-md-inline-block" href="{{ path('security_profil') }}">{{ app.user.username }}</a>
-          <a class="py-2 d-none d-md-inline-block" href="{{ path('security_logout') }}">Déconnexion</a>
           <a class="py-2 d-none d-md-inline-block" href="{{ path('security_produits') }}">Produits</a>
           <a class="py-2 d-none d-md-inline-block" href="{{ path('security_notes') }}">Notes</a>
           <a class="py-2 d-none d-md-inline-block" href="{{ path('security_messages') }}">Messages</a>
