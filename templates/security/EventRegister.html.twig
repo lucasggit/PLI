@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+
+    <style>
+        .regist_event{
+            margin-top: 10%;
+
+        }
+        .h2{
+            padding-left:40%;
+            padding-bottom: 3%;
+
+        }
+    </style>
+
+    <div class="regist_event">
+        <h2 class="h2"> Créer un créneau le {{ Date }} </h2>
+        {% set current_d = Date %}
+        {{ form_start(form) }}
+
+
+        {{ form_row(form.name, {'label': 'Nom de la séance :'}) }}
+        {{ form_row(form.description, {'label': ' Description :'}) }}
+        {{ form_row(form.hourStart, {'label': '  Début :'}) }}
+        {{ form_row(form.hourEnd, {'label': ' Fin :'}) }}
+
+
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+
+        {{ form_end(form) }}
+
+
+
+    </div>
+{% endblock %}

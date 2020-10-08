@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+
+    <style>
+        .regist_event{
+            margin-top: 10%;
+
+        }
+        .h2{
+            padding-left:40%;
+            padding-bottom: 3%;
+
+        }
+    </style>
+
+    <div class="regist_event">
+        <h2 class="h2"> Créer un créneau le {{ event.date|date('d-m-Y') }} </h2>
+
+        {{ form_start(form) }}
+
+
+        {{ form_row(form.name, {'label': 'Nom de la séance :'}) }}
+        {{ form_row(form.description, {'label': ' Description :'}) }}
+        {{ form_row(form.date, {'label': '  Date :'}) }}
+        {{ form_row(form.hourStart, {'label': '  Début :'}) }}
+        {{ form_row(form.hourEnd, {'label': ' Fin :'}) }}
+
+
+        <button type="submit" class="btn btn-primary">Modifier</button>
+        <a type="button" href="/event/delete/{{event.id}}" class="btn btn-primary">Supprimer</a>
+
+        {{ form_end(form) }}
+
+
+
+
+    </div>
+{% endblock %}

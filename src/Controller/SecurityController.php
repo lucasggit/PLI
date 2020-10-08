@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use App\Date\Month;
 use App\Entity\Client;
 use App\Entity\Coach;
 use App\Entity\ConfirmMail;
@@ -9,10 +9,12 @@ use App\Entity\User;
 use App\Entity\Produits;
 use App\Entity\Images;
 use App\Entity\Notes;
+use App\Form\EventType;
 use App\Form\NotesType;
 use App\Form\UserType;
 use App\Manager\Manager;
 use App\Form\ProduitsType;
+use App\Entity\Event;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Routing\Annotation\Route;
@@ -348,9 +350,217 @@ class SecurityController extends AbstractController
      */
     public function calendrier()
     {
-        $user=$this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+        $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        $month = null;
+        $year = null;
+
+        if ($month === null || $month > 12 || $month < 1) {
+            $month = intval(date('m'));
+        }
+        if ($year === null) {
+            $year = intval(date('Y'));
+        }
+
+        $Month = new Month($year,$month);
+
+        $date_start  =  new \DateTime("{$year}-{$month}-01");
+        $start2 = $date_start ->format('N') === '1' ? $date_start : $Month->getStartingDay()->modify('last monday');
+        $end = (clone $start2)->modify('+'.(6 + 7 * ($Month->getWeeks() -1)).'days');
+        $Eventrepository = $this->getDoctrine()->getRepository(Event::class);
+        $events = $Eventrepository->findAll();
+
+
+
+
         $this->denyAccessUnlessGranted('VIEW', $user);
-        return $this->render('security/calendrier.html.twig');
+        return $this->render('security/calendrier.html.twig', [
+            'month' => $month,
+            'months' => $months,
+            'year' => $year,
+            'weeks'=>$Month->getWeeks(),
+            'start_day'=> $Month->getStartingDay(),
+            'events'=> $events,
+            'days'=>$days,
+            'start'=>$date_start,
+            'start2'=>$start2,
+            'start_clone'=>$date_start,
+            'Month'=>$Month,
+            'user'=>$user
+        ]);
+    }
+
+    /**
+     * @Route("/calendrier/{monthN}/{yearN}", name="security_calendrier_previous")
+     * @param array $arr
+     * @param $year
+     * @return Response
+     */
+    public function calendrier_Prev(int $monthN, int $yearN)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+        $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        $month = $monthN;
+        $year =  $yearN;
+        if($month < 1){$month = 12;$year -=1;}
+
+
+        if ($month === null || $month > 12 || $month < 1) {
+            $month = intval(date('m'));
+        }
+        if ($year === null) {
+            $year = intval(date('Y'));
+        }
+
+        $Month = new Month($year,$month);
+
+        $date_start  =  new \DateTime("{$year}-{$month}-01");
+        $start2 = $date_start ->format('N') === '1' ? $date_start : $Month->getStartingDay()->modify('last monday');
+        $Eventrepository = $this->getDoctrine()->getRepository(Event::class);
+        $events = $Eventrepository->findAll();
+        $this->denyAccessUnlessGranted('VIEW', $user);
+        return $this->render('security/calendrier.html.twig', [
+            'month' => $month,
+            'months' => $months,
+            'year' => $year,
+            'weeks'=>$Month->getWeeks(),
+            'start_day'=> $Month->getStartingDay(),
+            'days'=>$days,
+            'start'=>$date_start,
+            'start2'=>$start2,
+            'start_clone'=>$date_start,
+            'Month'=>$Month,
+            'user'=>$user,
+            'events'=>$events
+        ]);
+    }
+
+    /**
+     * @Route("/calendrier/{monthN}/{yearN}", name="security_calendrier_Nxt")
+     * @param array $arr
+     * @param $year
+     * @return Response
+     */
+    public function calendrier_Next(int $monthN, int $yearN)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+        $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        $month = $monthN;
+        $year =  $yearN;
+        if($month < 1){$month = 12;$year -=1;}
+
+
+        if ($month === null || $month > 12 || $month < 1) {
+            $month = intval(date('m'));
+        }
+        if ($year === null) {
+            $year = intval(date('Y'));
+        }
+
+        $Month = new Month($year,$month);
+
+        $date_start  =  new \DateTime("{$year}-{$month}-01");
+        $start2 = $date_start ->format('N') === '1' ? $date_start : $Month->getStartingDay()->modify('last monday');
+        $Eventrepository = $this->getDoctrine()->getRepository(Event::class);
+        $events = $Eventrepository->findAll();
+
+        $this->denyAccessUnlessGranted('VIEW', $user);
+        return $this->render('security/calendrier.html.twig', [
+            'month' => $month,
+            'months' => $months,
+            'year' => $year,
+            'weeks'=>$Month->getWeeks(),
+            'start_day'=> $Month->getStartingDay(),
+            'days'=>$days,
+            'start'=>$date_start,
+            'start2'=>$start2,
+            'start_clone'=>$date_start,
+            'Month'=>$Month,
+            'user'=>$user,
+            'events'=>$events
+        ]);
+    }
+
+
+    /**
+     * @Route("/registerEvent/{Date}", name="security_registration_event")
+     */
+    public function registrationEvent(Request $request, Manager $Lemanager,\DateTime $Date) {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $event = new Event();
+        $form = $this->createForm(EventType::class, $event);
+        $form->remove('coach');
+        $form->remove('client');
+        $form->remove('date');
+
+
+
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $Lemanager->addEvent($event, $user,$Date);
+            return $this->redirectToRoute('security_calendrier');
+        }
+
+        return $this->render('security/EventRegister.html.twig', [
+            'Date'=>$Date->format('d-m-Y'),
+            'form' => $form->createView(),
+
+
+        ]);
+
+
+    }
+
+
+    /**
+     * @Route("/event/edit/{id}", name="security_edit_event")
+     */
+    public function EditEvent(Request $request, Manager $Lemanager,int $id) {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $Eventrepository = $this->getDoctrine()->getRepository(Event::class);
+        $event = $Eventrepository->findOneBy([
+            "id"=>$id,
+        ]);
+        $form = $this->createForm(EventType::class, $event);
+        $form->remove('coach');
+        $form->remove('client');
+
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $Lemanager->EditEvent($event, $user);
+            return $this->redirectToRoute('security_calendrier');
+        }
+
+        return $this->render('security/EventEdit.html.twig', [
+            'form' => $form->createView(),
+            'event'=>$event
+
+
+        ]);
+
+
+    }
+    /**
+     * @Route("/event/delete/{id}", name="security_delete_event")
+     */
+    public function DeleteEvent(Manager $Lemanager,int $id) {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $Eventrepository = $this->getDoctrine()->getRepository(Event::class);
+        $event = $Eventrepository->findOneBy([
+            "id"=>$id,
+        ]);
+        $Lemanager->DeleteEvent($event);
+        return $this->redirectToRoute('security_calendrier');
     }
 
     /**
