@@ -9,8 +9,12 @@ use App\Entity\User;
 use App\Entity\Produits;
 use App\Entity\Images;
 use App\Entity\Notes;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class EcoachController extends AbstractController
 {
@@ -19,10 +23,29 @@ class EcoachController extends AbstractController
     /**
      * @Route("/support", name="support")
      */
-    public function support()
+    public function support(\Swift_Mailer $mailer)
     {
-        return $this->render('ecoach/support.html.twig', [
+        $form = $this->createFormBuilder()
+            ->getForm();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // data is an array with "name", "email", and "message" keys
+            $mail = $form->getData('mail');
+            $sujet = $form->getData('sujet');
+            $text = $form->getData('message');
+            
+            $message = (new \Swift_Message('Hello Email'))
+                ->setFrom('myecoach@service.com')
+                ->setTo('myecoachservice@gmail.com')
+                ->setBody("Mail : $mail / Sujet : $sujet / Message : $text");
+            
+            $mailer->send($message);
+            return $this->redirectToRoute('support');
+            }
+        
+            return $this->render('ecoach/support.html.twig', [
             'controller_name' => 'EcoachController',
+            'form' => $form->createView(),
         ]);
     }
 

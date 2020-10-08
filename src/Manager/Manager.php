@@ -73,10 +73,24 @@ class Manager extends AbstractController
                 $this->getDoctrine()->getManager()->flush();
     }
 
-    public function delUser(User $user, Client $client)
+    public function delUserclient(User $user, Client $client)
     {
         $manager = $this->getDoctrine()->getManager();
         $manager->remove($client);
+        $manager->remove($user);
+        $manager->flush();
+    }
+
+    public function delUsercoach(User $user, Coach $coach)
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $clients = $coach->getClients();
+        $client = "";
+        foreach ($clients as $client): 
+            $coach->removeClient($client);
+            $manager->flush();
+        endforeach;
+        $manager->remove($coach);
         $manager->remove($user);
         $manager->flush();
     }

@@ -23,4 +23,26 @@
     <h1 class="display-4 font-weight-normal">Support technique</h1>
     <p class="lead text-muted">Aïe, un soucis ?</p>
 </div>
+<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3">
+  {{ form_start(form) }}
+    <h1 class="h3 mb-3 font-weight-normal">Envoyez-nous un message !</h1>
+    <div class="form-group">
+      <label for="exampleFormControlInput1">Adresse email</label>
+      <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlSelect1">Sujet</label>
+      <select class="form-control" id="exampleFormControlSelect1">
+        <option>Problème</option>
+        <option>Idée d'amélioration</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlTextarea1">Message</label>
+      <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="N'omettez aucun détail.." rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-lg btn-primary btn-block" style="background-color: rgba(0, 0, 0, .85); border-color: rgba(0, 0, 0, .85);">Envoyer</button>
+  {{ form_end(form) }}
+</div>
+
 {% endblock %}

@@ -132,6 +132,26 @@ class SecurityController extends AbstractController
 
 
     /**
+     * @Route("/reMail", name="security_reMail")
+     */
+    public function reMail(\Swift_Mailer $mailer): Response 
+    {
+        
+        $user=$this->get('security.token_storage')->getToken()->getUser();
+        $this->denyAccessUnlessGranted('VIEW', $user);
+
+        $message = (new \Swift_Message('My_eCoach - Confirmez votre mail !'))
+                    ->setFrom('myecoach@service.com')
+                    ->setTo($user->getEmail())
+                    ->setBody("Votre Token : ".$user->getConfirmMail()->getToken().""
+                    );
+        $mailer->send($message);
+        
+        return $this->redirectToRoute('security_profil');
+
+}
+
+    /**
      * @Route("/profil", name="security_profil")
      */
     public function profil(Request $request, Manager $manager, \Swift_Mailer $mailer): Response 
@@ -185,7 +205,7 @@ class SecurityController extends AbstractController
                     {
                         $message = (new \Swift_Message('Hello Email'))
                         ->setFrom('myecoach@service.com')
-                        ->setTo('clientx0x0@gmail.com')
+                        ->setTo($add_client->getUser()->getEmail())
                         ->setBody("Proposer de payer l'abonnement, puis *lien pour valider ajouter le liene entre Coach/Client*. ")
                     ;
                 
@@ -247,21 +267,20 @@ class SecurityController extends AbstractController
 
         $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
         $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
-
         if ($user->getIsCoach() == 1) {
             $coach = $Coachrepository->findOneBy([
                 'User' => $user,
             ]);
-            $manager->delUser($user, $coach);
+            $manager->delUsercoach($user, $coach);
         } else {
             $client = $Clientrepository->findOneBy([
                 'User' => $user,
             ]);
-            $manager->delUser($user, $client);
+            $manager->delUserclient($user, $client);
             }
         
-            $session = new Session();
-            $session->invalidate();
+        $session = new Session();
+        $session->invalidate();
          
             return $this->redirectToRoute('index');
 
@@ -304,9 +323,24 @@ class SecurityController extends AbstractController
     public function messages(Request $request, Manager $Lemanager, UserPasswordEncoderInterface $encoder)
     {
         $user=$this->get('security.token_storage')->getToken()->getUser();
+        
+        $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
+        $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
+
+        if ($user->getIscoach() == 1){
+            $coach = $Coachrepository->findOneBy(['User' => $user]);
+            $client = $Clientrepository->findBy(['coach' => $coach]);
+        } else {
+            $client = $Clientrepository->findOneBy(['User' => $user]);
+            $coach = $Coachrepository->findOneBy(['Clients' => $client]);
+        }
+
         $this->denyAccessUnlessGranted('VIEW', $user);
         
-        return $this->render('security/messages.html.twig');
+        return $this->render('security/messages.html.twig', [
+            'Coach_' => $coach,
+            'Client_' => $client,
+        ]);
     }
     
     /**

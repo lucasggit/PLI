@@ -34,7 +34,7 @@
                 {% endif %}
                 {% if app.user.Iscoach == 1 %}
                     {% if app.user.ConfirmMail.isConfirm == 0 %}
-                    <p class="lead text-muted">Pour obtenir le droit d'ajouter des clients, il faut tout d'abord valider votre adresse mail ! <br> (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</p><br>
+                    <p class="lead text-muted">Pour obtenir le droit d'ajouter des clients, il faut tout d'abord valider votre adresse mail ! <br> (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur <a href="{{ path('security_reMail') }}" style="text-decoration: none">renvoyer</a> un mail !</p><br>
                         {{ form_start(form1) }} 
 
                         {{ form_row(form1.Token, {'label': 'Entrez la clef reçu par mail :', 'attr':{'class': 'form-control'}}) }}
@@ -52,7 +52,7 @@
                 {% else %}
                     {% if app.user.ConfirmMail.isConfirm == 0 %}
                         <p class="lead font-weight-normal">Votre clef de lien : <p class="lead font-weight-normal">????????????????</p></p><br>
-                            <p class="lead text-muted">Pour obtenir votre Token, il faut tout d'abord valider votre adresse mail ! (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur renvoyer un mail !</p><br>
+                            <p class="lead text-muted">Pour obtenir votre Token, il faut tout d'abord valider votre adresse mail ! (Si votre mail est erroné, <a href="{{ path('security_editprofil') }}" style="text-decoration: none">Modifiez</a> le puis cliquer sur <a href="{{ path('security_reMail') }}" style="text-decoration: none">renvoyer</a> un mail !</p><br>
                         {{ form_start(form1) }} 
 
                         {{ form_row(form1.Token, {'label': 'Entrez la clef reçu par mail :', 'attr':{'class': 'form-control'}}) }}
