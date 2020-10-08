@@ -19,8 +19,72 @@
       }
     }
 </style>
-<div class="col-md-5 p-lg-5 mx-auto my-5">
-    <h1 class="display-4 font-weight-normal">Un calendrier UwU !</h1>
-    <p class="lead text-muted">Trop cool ce calendrier</p>
-</div>
+    <div class="">
+        <h1 class="display-4 font-weight-normal">Mon e-calendrier </h1>
+
+        <div class="d-flex flex-row align-items-center justify-content-between mx-sm-3" id="div-header">
+            <h1>{{ months[month-1] }}  {{ year }}</h1>
+
+
+            <div id="div-header2">
+                <a href="/calendrier/{{ month-1 }}/{{ year }}" id="btn" class=" btn btn-primary">&lt</a>
+                <a href="/calendrier/{{ month+1 }}/{{ year }}" id="btn" class=" btn btn-primary">&gt</a>
+            </div>
+        </div>
+
+        <?php'test';?>
+
+
+        <div class="Calendar">
+
+
+            <table class="calendar__table calendar__table--{{ weeks }}">
+
+
+                {% for i in 0..weeks %}
+
+
+                    <tr>
+                        {% for keys, day in days  %}
+
+                            {% set clone = start_day %}
+                            {% set idx = loop.index %}
+                            {% set kk = keys+i*7 %}
+
+                            {% set str = '+'~kk~' days' %}
+
+                            {% set clone2 = start2|date_modify(str)|date('d') %}
+                            {% set clone3 = start2|date_modify(str)|date('Y-m') %}
+
+
+                            <td class="{{  Month.withInMonth(date(clone3)) ? '' : 'calendar__otherMonth'}}">
+                                {% if i == 0 %}
+                                    <div class="calendar__weekday">{{day}}</div>
+                                {% endif %}
+
+
+                                <div>
+                                    <a class="calendar__day" href="{{ path('security_registration_event',{ Date: start2|date_modify(str)|date('Y-m-d')  }) }}">{{clone2}}</a>
+                                    <br>
+                                    {% for event in events %}
+                                    {% if  event.date == start2|date_modify(str)  %}
+
+                                        <a href="{{ path('security_edit_event',{ id:  event.id   }) }}">{{ event.name }}  {{ event.hourStart|date('H:i')  }} - {{ event.hourEnd|date('H:i') }}</a>
+                                    {% endif %}
+
+
+                                </div>
+                                {% endfor %}
+
+
+                            </td>
+                        {% endfor %}
+
+                    </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+
+    </div>
 {% endblock %}

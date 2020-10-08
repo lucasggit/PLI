@@ -2,6 +2,7 @@
 namespace App\Manager;
 
 use App\Entity\Client;
+use App\Entity\Event;
 use App\Entity\User;
 use App\Entity\Produits;
 use App\Entity\Clientele;
@@ -9,6 +10,7 @@ use App\Entity\Coach;
 use App\Entity\ConfirmMail;
 use App\Entity\Images;
 use App\Entity\Notes;
+use Symfony\Component\Validator\Constraints\DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -39,6 +41,27 @@ class Manager extends AbstractController
         $manager->persist($user);
         $manager->persist($confirmMail);
         $manager->flush();
+    }
+    public function addEvent(Event $event,User $user, \DateTime $Date) {
+
+        $manager = $this->getDoctrine()->getManager();
+        $event->setDate($Date);
+        $event->setCoach($user->getcoach());
+        $event->setClient(null);
+        $manager->persist($event);
+        $manager->flush();
+    }
+    public function EditEvent(Event $event,User $user) {
+        $manager = $this->getDoctrine()->getManager();
+        $manager->persist($event);
+        $manager->flush();
+    }
+    public function DeleteEvent(Event $event)
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $manager->remove($event);
+        $manager->flush();
+
     }
 
     public function addCoach(Coach $coach, User $user) {

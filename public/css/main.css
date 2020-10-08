@@ -1,46 +1,64 @@
-body {
 
-  min-height: 100vh;
+.Calendar{
+  position:  relative;
+
+
+}
+.calendar__btn{
+  width:55px ;
+  height: 55px;
+  line-height: 55px;
+  text-align: center;
+  color: #FFF;
+  font-size:30px;
+  background-color: #565656;
+  border-radius: 50%;
+  position :absolute;
+  bottom: 30px;
+  right:30px;
+  text-decoration: none;
+  transition: transform 0.3s;
+
+}
+.calendar__btn:hover{
+  transform: scale(1.1);
+}
+.calendar__table{
+  width: 100%;
+  height: calc(100vh - 128px);
+}
+.calendar__table td{
+  padding: 10px;
+  border: 1px solid #CCC;
+  vertical-align: top;
+  width: 14.9%;
+  background-color: #f1f1f1;
+  border-radius: 10px 10px 0 0 !important;
+  /*height: ;*/
+}
+.calendar__table--6weeks td
+{
+  height: 16.66%;
+}
+.calendar__weekday{
+  font-weight:bold;
+  color: #000;
+  font-size:1.2em;
+}
+.calendar__day
+{
+  font-size:1.3em;
+}
+.calendar__otherMonth .calendar__day {
+  opacity: 0.4;
+}
+#btn{
+  background-color: #565656;
+}
+#event_date_time_hour {
+  visibility: hidden;
+}
+#event_date_time_minute{
+  visibility: hidden;
 }
 
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-::-webkit-scrollbar-track {
-  width: 5px;
-  background: #f5f5f5;
-}
-
-::-webkit-scrollbar-thumb {
-  width: 1em;
-  background-color: #ddd;
-  outline: 1px solid slategrey;
-  border-radius: 1rem;
-}
-
-.text-small {
-  font-size: 0.9rem;
-}
-
-.messages-box,
-.chat-box {
-  height: 510px;
-  overflow-y: scroll;
-}
-
-.rounded-lg {
-  border-radius: 0.5rem;
-}
-
-input::placeholder {
-  font-size: 0.9rem;
-  color: #999;
-}
-
-.router-link-active {
-  z-index: 2 !important;
-  color: #fff !important;
-  background-color: #007bff !important;
-  border-color: #007bff !important;
-}
