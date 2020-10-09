@@ -16,5 +16,22 @@
 {% endblock %}
 
 {% block javascript %}
-  {{ encore_entry_script_tags('app') }}
+    {% if app.user.Iscoach == 1 %}
+        <br><div>
+            {% if Coach_.clients|length < 1 %}
+              <p style="text-align: center" class="lead text-muted">Vous n'avez pas encore de client, songez à bien vous lier grâce au token de votre client. Vous pouvez en saisir dans la page <a href="{{ path('security_profil') }}" style="text-decoration: none">profil</a>.</p>
+              <br><br><br><br>
+            {% else %}
+              {{ encore_entry_script_tags('app') }}
+            {% endif %}
+        </div>
+    {% else %}
+        {% if Client_.coach == null %}
+            <p style="text-align: center" class="lead text-muted">Vous n'avez pas encore de coach, songez à bien vous lier grâce à votre token dans la page <a href="{{ path('security_profil') }}" style="text-decoration: none">profil</a>, et à confirmer le mail qui vous a été envoyé.</p><br>
+            <br><br><br><br>
+        {% else %}
+            {{ encore_entry_script_tags('app') }}
+        {% endif %}
+    {% endif %}
+
 {% endblock %}

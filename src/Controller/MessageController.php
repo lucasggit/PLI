@@ -2,13 +2,18 @@
 
 namespace App\Controller;
 
+use App\Manager\Manager;
 use App\Entity\Conversation;
 use App\Entity\Message;
+use App\Controller\ConversationController;
 use App\Repository\MessageRepository;
 use App\Repository\UserRepository;
 use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Client;
+use App\Entity\Coach;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -137,6 +142,54 @@ class MessageController extends AbstractController
         $message->setMine(true);
         return $this->json($message, Response::HTTP_CREATED, [], [
             'attributes' => self::ATTRIBUTES_TO_SERIALIZE
+        ]);
+    }
+
+    public function declare_convs(Request $request, $coachs, $clients, string $type)
+    {
+      if ($type == "client") {
+        $response = $this->forward('App\Controller\ConversationController::new_conv', [
+            'request'  => $request,
+            'id' => $coachs->getUser()->getId(),
+        ]);
+      } else if ($type == "coach") {
+          foreach ($clients as $client) {
+            $response = $this->forward('App\Controller\ConversationController::new_conv', [
+                'request'  => $request,
+                'id' => $client->getUser()->getId(),
+            ]);
+          }
+      }
+    }
+
+    /**
+     * @Route("/", name="security_messages")
+     */
+    public function messages(Request $request, Manager $Lemanager, UserPasswordEncoderInterface $encoder)
+    {
+        $user=$this->get('security.token_storage')->getToken()->getUser();
+
+        $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
+        $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
+
+        if ($user->getIscoach() == 1){
+            $coach = $Coachrepository->findOneBy(['User' => $user]);
+            $clients = $Clientrepository->findBy(['coach' => $coach]);
+            if ($clients != null)
+              $this->declare_convs($request, $coach, $clients, "coach");
+        } else {
+            $clients = $Clientrepository->findOneBy(['User' => $user]);
+            $coach_id = $clients->getCoach();
+            $coach = $Coachrepository->findOneBy(['id' => $coach_id]);
+            if ($coach != null)
+              $this->declare_convs($request, $coach, $clients, "client");
+        }
+
+        $this->denyAccessUnlessGranted('VIEW', $user);
+
+        return $this->render('security/messages.html.twig', [
+            'Coach_' => $coach,
+            'Client_' => $clients,
         ]);
     }
 }
