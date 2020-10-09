@@ -99,9 +99,7 @@
   {% else %}
     <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
       <div class="col-md-5 p-lg-5 mx-auto my-5">
-        <h1 class="display-4 font-weight-normal">1er Graphique</h1>
-        <p class="lead font-weight-normal">WOW ce graphique</p>
-        <a class="btn btn-outline-secondary" href="#">Coming soon</a>
+        <h1 class="display-4 font-weight-normal">Bienvenue, voici votre dashboard !</h1>
       </div>
     </div>
 
@@ -373,10 +371,41 @@
         </div>
         </div>
 
-      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-        <div class="my-3 p-3">
-          <h2 class="display-5">5eme Graphique</h2>
-          <p class="lead">WOW ce graphique</p>
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5  overflow-hidden">
+      <div class="my-3 p-3">
+      <div class="card mb-4 shadow-sm" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <div class="card-body">
+        {% if app.user.Iscoach == 1 %}
+                {% if event < 1 %}
+                  <br><br>
+                  <b><h2 style="text-align: center">Aucun event</h2></b><br>
+                  <p style="text-align: center" class="lead text-muted">Vous n'avez pas créez d'event. Vous pouvez en créer dans la page <a href="{{ path('security_calendrier') }}" style="text-decoration: none">d'event</a>.</p>
+                  <br><br>
+                {% else %}
+                <h5 class="card-title">
+                <b>Vous avez créer aujourd'hui</b>
+                </h5>
+                <h5><b>{{event}}</b> event(s) !</h5>
+                  <div class="btn-group">
+                    <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_calendrier') }}">Mes events</a>
+                  </div>
+                {% endif %}
+                {% else %}
+                    {% if Client_.coach == null %}
+                        <br><br><br>
+                        <p style="text-align: center" class="lead text-muted">Vous n'avez d'event aujourd'hui, n'hésitez pas à faire un tour pour choisir un créneau dans la page <a href="{{ path('security_calendrier') }}" style="text-decoration: none">d'event</a> !</p><br>
+                        <br><br>
+                    {% else %}
+                    <h5 class="card-title">
+                    <b>Vous avez aujourd'hui</b>
+                    </h5>
+                    <h5><b>{{event}}</b> event(s) proposés par le coach !</h5>
+                      <div class="btn-group">
+                        <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_calendrier') }}">Mes events</a>
+                        </div>
+                    {% endif %}
+        {% endif %}
+        </div>
         </div>
       </div>
     </div>

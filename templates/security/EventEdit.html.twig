@@ -13,11 +13,12 @@
         }
     </style>
 
+
     <div class="regist_event">
-        <h2 class="h2"> Créer un créneau le {{ event.date|date('d-m-Y') }} </h2>
 
+        {% if app.user.isCoach() == true%}
+            <h2 class="h2"> Modifier un créneau le {{ event.date|date('d-m-Y') }} </h2>
         {{ form_start(form) }}
-
 
         {{ form_row(form.name, {'label': 'Nom de la séance :'}) }}
         {{ form_row(form.description, {'label': ' Description :'}) }}
@@ -30,9 +31,42 @@
         <a type="button" href="/event/delete/{{event.id}}" class="btn btn-primary">Supprimer</a>
 
         {{ form_end(form) }}
+        {% else %}
+            <h2 class="h2"> Valider un créneau le {{ event.date|date('d-m-Y') }} </h2>
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4" >
+                    <div class="card mb-4 shadow-sm" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <div class="card-body">
+                            <h5 class="card-title" style="text-align: center; padding-bottom: 5%">
+                                Votre séance avec votre coach {{ event.getCoach() }}
+                            </h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                Nom de la séance :
+                            </h6>
+                            <p class="card-text" style="padding: 3%; text-decoration: #565656">{{ event.name }}  </p>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                Description de la séance :
+                            </h6>
+                            <p class="card-text" style="padding: 3%; text-decoration: #565656">{{ event.description }}</p>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                Horaire de la séance :
+                            </h6>
+                            <p class="card-text" style="padding: 3%; text-decoration: #565656">{{ event.hourStart|date('H:i') }} - {{ event.hourEnd|date('H:i') }}</p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ path('security_client_add_event',{ id:  event.id   })}}">Valider</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
 
 
 
 
-    </div>
 {% endblock %}

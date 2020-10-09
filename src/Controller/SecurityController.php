@@ -36,6 +36,7 @@ class SecurityController extends AbstractController
         $username = null;
         $content = null;
         $date = null;
+        $event = null;
 
         if ($user == "anon."){
             $user = null;
@@ -63,6 +64,9 @@ class SecurityController extends AbstractController
           $date = $res->{'createdAt'};
         }
 
+        $event = $this->findHMEvent();
+
+
         if ($user->getIscoach() == 1){
            $coach = $Coachrepository->findOneBy(['User' => $user]);
            $client = $Clientrepository->findAll();
@@ -82,7 +86,8 @@ class SecurityController extends AbstractController
             'produits' => $produits,
             'last_mess_username' => $username,
             'last_mess_content' => $content,
-            'last_mess_date' => $date
+            'last_mess_date' => $date,
+            'event' => $event
         ]);
     }
 
@@ -525,6 +530,37 @@ class SecurityController extends AbstractController
         ]);
     }
 
+     public function findHMEvent() {
+      $user = $this->get('security.token_storage')->getToken()->getUser();
+      $eventRepo =  $this->getDoctrine()->getRepository(Event::class);
+
+      $all_date = array();
+      foreach($eventRepo->findAll() as $event) {
+        if ($user->getIscoach() == true) {
+          if ($event->getCoach()->getId() != $user->getCoach()->getId()) {
+            continue;
+          }
+        }
+        /*else if ($user->getIscoach() == false) {
+          if ($event->getClient()->getId() != $user->getClients()->getId())
+            continue;
+        }*/
+        $actual = array();
+        array_push($actual, intval($event->getDate()->format('d')));
+        array_push($actual, intval($event->getDate()->format('m')));
+        array_push($actual, intval($event->getDate()->format('Y')));
+        array_push($all_date, $actual);
+      }
+      $i = 0;
+      foreach($all_date as $event) {
+        if ($event[0] < intval(date("d")) || $event[1] < intval(date("m")) || $event[2] < intval(date("Y")))
+          continue;
+        if ($event[0] > intval(date("d")) || $event[1] > intval(date("m")) || $event[2] > intval(date("Y")))
+          continue;
+        $i++;
+      }
+      return $i;
+    }
 
     /**
          * @Route("/registerEvent/{Date}", name="security_registration_event")
@@ -532,6 +568,7 @@ class SecurityController extends AbstractController
         public function registrationEvent(Request $request, Manager $Lemanager,\DateTime $Date) {
             $user = $this->get('security.token_storage')->getToken()->getUser();
             $eventRepo =  $this->getDoctrine()->getRepository(Event::class);
+
 
             $event = new Event();
             $form = $this->createForm(EventType::class, $event);
@@ -554,26 +591,25 @@ class SecurityController extends AbstractController
                     'hourStart'=>$hourSt
                 ]);
 
-                //$date_actu  = $date = date('Y-m-d');
-                $date_actu = date('Y-m-d');
+
+                //dd($eventRepo->findAll()[0]->getDate());
                 if(($event2 || $event3)) {
                     echo "<script>alert('Créneau indisponible !')</script>";
-                }elseif ( $hourEd<$hourSt) {
+                }elseif ( $hourEd<= $hourSt) {
                     echo "<script>alert(' Horaires incompatibles !')</script>";
-                }elseif ($date_actu>$event->getDate()){
+                }elseif (intval($Date->format('Y')) < intval(date("Y")) || intval($Date->format('m')) < intval(date("m")) || intval($Date->format('d')) < intval(date("d"))) {
                     echo "<script>alert(' Date incompatible !')</script>";
                 }else{
                     $Lemanager->addEvent($event, $user,$Date);
                     return $this->redirectToRoute('security_calendrier');
                 }
+
             }
             return $this->render('security/EventRegister.html.twig', [
-                'Date'=>$Date->format('d-m-Y'),
-                'form' => $form->createView(),
+            'Date'=>$Date->format('d-m-Y'),
+            'form' => $form->createView(),
             ]);
-        }
-
-
+          }
 
     /**
      * @Route("/event/edit/{id}", name="security_edit_event")
