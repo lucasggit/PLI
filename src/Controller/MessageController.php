@@ -23,7 +23,7 @@ use Symfony\Component\Mercure\PublisherInterface;
 use Symfony\Component\Mercure\Update;
 
 /**
- * @Route("/messages", name="messages.")
+ * @Route("/messages", name="messages")
  */
 class MessageController extends AbstractController
 {
@@ -147,6 +147,7 @@ class MessageController extends AbstractController
 
     public function declare_convs(Request $request, $coachs, $clients, string $type)
     {
+      //Déclaration des premières conversations
       if ($type == "client") {
         $response = $this->forward('App\Controller\ConversationController::new_conv', [
             'request'  => $request,
@@ -167,6 +168,7 @@ class MessageController extends AbstractController
      */
     public function messages(Request $request, Manager $Lemanager, UserPasswordEncoderInterface $encoder)
     {
+        //Récupération des messages côté clients et coachs
         $user=$this->get('security.token_storage')->getToken()->getUser();
 
         $Coachrepository = $this->getDoctrine()->getRepository(Coach::class);
