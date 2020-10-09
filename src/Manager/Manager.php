@@ -39,7 +39,7 @@ class Manager extends AbstractController
                 $randomString .= $characters[rand(0, $charactersLength - 1)];
             }
         $confirmMail->setToken($randomString);
-        
+
 
         $manager->persist($user);
         $manager->persist($confirmMail);
@@ -65,6 +65,13 @@ class Manager extends AbstractController
         $manager->remove($event);
         $manager->flush();
 
+    }
+
+    public function ValidEvent(Event $event, Client $client){
+        $manager = $this->getDoctrine()->getManager();
+        $event->setClient($client);
+        $manager->persist($event);
+        $manager->flush();
     }
 
     public function addCoach(Coach $coach, User $user) {
@@ -112,7 +119,7 @@ class Manager extends AbstractController
         $manager = $this->getDoctrine()->getManager();
         $clients = $coach->getClients();
         $client = "";
-        foreach ($clients as $client): 
+        foreach ($clients as $client):
             $coach->removeClient($client);
             $manager->flush();
         endforeach;
@@ -228,6 +235,3 @@ class Manager extends AbstractController
     }
 
 }
-
-
-

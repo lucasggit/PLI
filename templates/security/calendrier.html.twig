@@ -19,19 +19,33 @@
       }
     }
 </style>
-<div class="col-md-5 p-lg-5 mx-auto my-5">
-  <h1 class="display-4 font-weight-normal">Mon Calendrier</h1>
-  <p class="lead font-weight-normal">Vos rendez-vous juste ici</p>
-</div>
-    <div class="">
+    <div  style="padding-top: 5%" class="">
+
 
         <div class="d-flex flex-row align-items-center justify-content-between mx-sm-3" id="div-header">
-            <h1>{{ months[month-1] }}  {{ year }}</h1>
+            <h1 style="padding-left:40%">{{ months[month-1] }}  {{ year }}</h1>
+
+
+
 
 
             <div id="div-header2">
-                <a href="/calendrier/{{ month-1 }}/{{ year }}" id="btn" class=" btn btn-primary">&lt</a>
-                <a href="/calendrier/{{ month+1 }}/{{ year }}" id="btn" class=" btn btn-primary">&gt</a>
+                {% if  month == 12 %}
+                    {%set cloneM = 1 %}
+                    <a href="/calendrier/ {{ month-1}}/{{ year }}" id="btn" class=" btn btn-primary">&lt</a>
+                    <a href="{{ path('security_calendrier',{ monthN: month-1,yearN:year   }) }}">&lt</a>
+                    <a href="/calendrier/{{cloneM}}/{{ year+1 }}" id="btn" class=" btn btn-primary">&gt</a>
+                    {% elseif month == 1 %}
+                        {%set cloneM = 12 %}
+
+                        <a href="/calendrier/{{cloneM}}/{{ year-1}}" id="btn" class=" btn btn-primary">&lt</a>
+                        <a href="/calendrier/{{ month+1 }}/{{ year }}" id="btn" class=" btn btn-primary">&gt</a>
+                    {% else %}
+
+                        <a href="/calendrier/ {{ month-1}}/{{ year }}" id="btn" class=" btn btn-primary">&lt</a>
+                        <a href="/calendrier/{{ month+1 }}/{{ year }}" id="btn" class=" btn btn-primary">&gt</a>
+                {% endif %}
+
             </div>
         </div>
 
@@ -67,12 +81,22 @@
 
 
                                 <div>
+                                    {% if user.getIscoach() %}
                                     <a class="calendar__day" href="{{ path('security_registration_event',{ Date: start2|date_modify(str)|date('Y-m-d')  }) }}">{{clone2}}</a>
+                                    {% else %}
+                                        {{clone2}}
+                                    {% endif %}
                                     <br>
                                     {% for event in events %}
-                                    {% if  event.date == start2|date_modify(str)  %}
+                                    {% if  event.date == start2|date_modify(str) and event.coach == app.user.coach %}
+                                        <a href="{{ path('security_edit_event',{ id:  event.id   }) }}">{{ event.name }}  {{ event.hourStart|date('H:i')  }} - {{ event.hourEnd|date('H:i') }}</a><br>
+                                    {% elseif  event.date == start2|date_modify(str)  and event.client == null %}
+                                        <a href="{{ path('security_edit_event',{ id:  event.id   }) }}">{{ event.name }}  {{ event.hourStart|date('H:i')  }} - {{ event.hourEnd|date('H:i') }}</a><br>
+                                    {%elseif  event.date == start2|date_modify(str)  %}
 
-                                        <a href="{{ path('security_edit_event',{ id:  event.id   }) }}">{{ event.name }}  {{ event.hourStart|date('H:i')  }} - {{ event.hourEnd|date('H:i') }}</a>
+                                                <p>{{ event.name }}  {{ event.hourStart|date('H:i')  }} - {{ event.hourEnd|date('H:i') }}</p>
+
+
                                     {% endif %}
 
 

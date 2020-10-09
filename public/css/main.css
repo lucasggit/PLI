@@ -89,7 +89,7 @@ input::placeholder {
 {
   font-size:1.3em;
 }
-.calendar__otherMonth .calendar__day {
+.calendar__otherMonth {
   opacity: 0.4;
 }
 #btn{

@@ -398,9 +398,17 @@ class SecurityController extends AbstractController
         $start2 = $date_start ->format('N') === '1' ? $date_start : $Month->getStartingDay()->modify('last monday');
         $end = (clone $start2)->modify('+'.(6 + 7 * ($Month->getWeeks() -1)).'days');
         $Eventrepository = $this->getDoctrine()->getRepository(Event::class);
-        $events = $Eventrepository->findAll();
-
-
+        $clientrepository = $this->getDoctrine()->getRepository(Client::class);
+        if($user->getIscoach()==true){
+            $events = $Eventrepository->findBy([
+                'coach'=> $user->getCoach()
+            ]);
+        }else{
+            $client = $clientrepository->findOneBy(['User'=>$user]);
+            $events = $Eventrepository->findBy([
+                'coach'=> $client->getCoach()
+            ]);
+        }
 
 
         $this->denyAccessUnlessGranted('VIEW', $user);
@@ -481,7 +489,9 @@ class SecurityController extends AbstractController
         $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
         $month = $monthN;
         $year =  $yearN;
-        if($month < 1){$month = 12;$year -=1;}
+        if($month < 1){
+          $month = 12;$year -=1;
+        }
 
 
         if ($month === null || $month > 12 || $month < 1) {
@@ -517,35 +527,52 @@ class SecurityController extends AbstractController
 
 
     /**
-     * @Route("/registerEvent/{Date}", name="security_registration_event")
-     */
-    public function registrationEvent(Request $request, Manager $Lemanager,\DateTime $Date) {
-        $user = $this->get('security.token_storage')->getToken()->getUser();
-        $event = new Event();
-        $form = $this->createForm(EventType::class, $event);
-        $form->remove('coach');
-        $form->remove('client');
-        $form->remove('date');
+         * @Route("/registerEvent/{Date}", name="security_registration_event")
+         */
+        public function registrationEvent(Request $request, Manager $Lemanager,\DateTime $Date) {
+            $user = $this->get('security.token_storage')->getToken()->getUser();
+            $eventRepo =  $this->getDoctrine()->getRepository(Event::class);
 
+            $event = new Event();
+            $form = $this->createForm(EventType::class, $event);
+            $form->remove('coach');
+            $form->remove('client');
+            $form->remove('date');
+            $form->handleRequest($request);
 
+            if($form->isSubmitted() && $form->isValid()) {
+                $hourSt = $form->get('hourStart')->getData();
+                $hourEd = $form->get('hourEnd')->getData();
+                $bool = false;
+                $event3 =  $eventRepo->findOneBy([
+                    'date'=>$Date,
+                    'hourEnd'=>$hourEd
+                ]);
 
+                $event2 =  $eventRepo->findOneBy([
+                    'date'=>$Date,
+                    'hourStart'=>$hourSt
+                ]);
 
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-            $Lemanager->addEvent($event, $user,$Date);
-            return $this->redirectToRoute('security_calendrier');
+                //$date_actu  = $date = date('Y-m-d');
+                $date_actu = date('Y-m-d');
+                if(($event2 || $event3)) {
+                    echo "<script>alert('Créneau indisponible !')</script>";
+                }elseif ( $hourEd<$hourSt) {
+                    echo "<script>alert(' Horaires incompatibles !')</script>";
+                }elseif ($date_actu>$event->getDate()){
+                    echo "<script>alert(' Date incompatible !')</script>";
+                }else{
+                    $Lemanager->addEvent($event, $user,$Date);
+                    return $this->redirectToRoute('security_calendrier');
+                }
+            }
+            return $this->render('security/EventRegister.html.twig', [
+                'Date'=>$Date->format('d-m-Y'),
+                'form' => $form->createView(),
+            ]);
         }
 
-        return $this->render('security/EventRegister.html.twig', [
-            'Date'=>$Date->format('d-m-Y'),
-            'form' => $form->createView(),
-
-
-        ]);
-
-
-    }
 
 
     /**
@@ -578,6 +605,30 @@ class SecurityController extends AbstractController
 
 
     }
+
+        /**
+         * @Route("/event/client/{id}", name="security_client_add_event")
+         */
+        public function validClientEvent(Request $request, Manager $Lemanager,int $id,\Swift_Mailer $mailer) {
+            $user = $this->get('security.token_storage')->getToken()->getUser();
+
+            $Eventrepository = $this->getDoctrine()->getRepository(Event::class);
+            $event = $Eventrepository->findOneBy([
+                "id"=>$id,
+            ]);
+            $clientRepo = $this->getDoctrine()->getRepository(Client::class);
+            $client = $clientRepo->findOneBy([
+                "User"=>$user->getId(),
+            ]);
+                $Lemanager->ValidEvent($event, $client);
+                $message = (new \Swift_Message('Hello Email'))
+                    ->setFrom('myecoach@service.com')
+                    ->setTo($client->getCoach()->getUser()->getEmail())
+                    ->setBody("Le créneau du ".$event->getDate()->format('d-m-Y')." :".$event->getHourStart()->format('H:i')." - ".$event->getHourEnd()->format('H:i')." a été choisi par : ".$client->getUser()->getUsername());
+                        $mailer->send($message);
+                return $this->redirectToRoute('security_calendrier');
+        }
+
     /**
      * @Route("/event/delete/{id}", name="security_delete_event")
      */
