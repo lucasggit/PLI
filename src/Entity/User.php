@@ -12,7 +12,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(
- * fields={"email", "username"},
+ * fields={"email"},
+ * errorPath="email",
  * message="L'email ou le username est déja utilisé !"
  * )
  */
@@ -45,7 +46,7 @@ class User implements UserInterface
     public $confirm_password;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $username;
 

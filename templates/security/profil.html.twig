@@ -19,7 +19,7 @@
                         {% else %}
                         <p class="lead text-muted">Voici vos clients :</p>
                             {% for client in Coach_.clients %}
-                            <p class="lead font-weight-normal">{{ client.user.username }} - <a href="/profil/delete_relation/{{client.id}}" class="btn btn-outline-secondary">Dissocier</a></p>
+                            <p class="lead font-weight-normal">{{ client.user.username }} - <button onclick="deleteRelationCoach({{client.id}})" class="btn btn-outline-secondary">Dissocier</button></p>
                             {% endfor %}
                         {% endif %}
                     </div>
@@ -29,7 +29,7 @@
                         <p class="lead text-muted">Vous n'avez pas encore de coach, songez à bien vous lier grâce à votre token ci-dessous, et à confirmer le mail qui vous a été envoyé.</p><br>
                     {% else %}
                     <p class="lead text-muted">Voici votre Coach : </p>
-                    <p class="lead font-weight-normal">{{ Client_.coach }} - <a href="/profil/delete_relation/{{Client_.coach.id}}" class="btn btn-outline-secondary">Dissocier</a></p>
+                    <p class="lead font-weight-normal">{{ Client_.coach }} - <button onclick="deleteRelationClient({{Client_.coach.id}})" class="btn btn-outline-secondary">Dissocier</button></p>
                     {% endif %}
                 {% endif %}
                 {% if app.user.Iscoach == 1 %}
@@ -69,12 +69,29 @@
                     function deleteUser() {
                         var ask = window.confirm("Vous êtes sur le point de vous désinscrire. Si vous ne pensez jamais réutiliser My-Ecoach et souhaitez effacer complètement votre compte, nous pouvons nous en charger. Rappelez-vous cependant que vous ne pourrez ni réactiver votre compte ni récupérer son contenu ou ses informations.\n\n{% if app.user.Iscoach == 1 %} Vous êtes répertorié comme le coach de {{ Coach_.clients|length }} clients. La suppression définitive de votre compte entraînera celle de cette clientèle.{% else %}{% if Client_.coach == null %}Vous n'avez pas de coach, avez-vous eu des soucis lors de l'utilisation de My-Ecoach ? Faites vos retours dans l'onglet Support{% else %}Vous êtes répertorié comme le client de {{ Client_.coach }}. La suppression définitive de votre compte entraînera celle de votre relation avec ce coach.{% endif %}{% endif %}\n\nSi vous souhaitez tout de même supprimer votre compte, cliquez sur OK.");
                         if (ask) {
-                            window.alert("This post was successfully deleted.");
-                    
+                            window.alert("Poof ! Plus de compte, retour à la page d'accueil !");
                             window.location.href = "{{ path('security_delUser') }}";
                     
                         }
                     }
+
+                    function deleteRelationCoach(id) {
+                        var ask = window.confirm("Vous êtes sur le point de supprimer cette personne. Etes-vous sure ?");
+                        if (ask) {
+                            window.alert("Poof ! Vous venez de supprimer cette personne !");
+                            window.location.href="/profil/delete_relation/"+id+""
+                        }
+                    }
+
+                    function deleteRelationClient(id) {
+                        var ask = window.confirm("Vous êtes sur le point de supprimer cette personne. Etes-vous sure ?");
+                        if (ask) {
+                            window.alert("Poof ! Vous venez de supprimer cette personne !");
+                            window.location.href="/profil/delete_relation/"+id+""
+                        }
+                    }
+
+                    
                 </script>
                 
                 <br><br><a class="btn btn-outline-secondary" href="{{ path('security_logout') }}">Déconnexion</a>

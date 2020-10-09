@@ -40,8 +40,6 @@ class Event
      */
     private $coach;
 
-
-
     /**
      * @ORM\Column(type="date")
      */
@@ -86,8 +84,6 @@ class Event
         return $this;
     }
 
-
-
     public function getClient(): ?Client
     {
         return $this->client;
@@ -111,8 +107,6 @@ class Event
 
         return $this;
     }
-
-
 
     public function getDate(): ?\DateTimeInterface
     {

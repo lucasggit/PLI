@@ -17,6 +17,7 @@ use App\Form\ProduitsType;
 use App\Entity\Event;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -76,27 +77,33 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $Lemanager->addUser($user, $encoder, $ConfirmMail);
-            // $Lemanager->addConfirmMail($ConfirmMail, $user);
-            $iscoach = $form->get('Iscoach')->getData();
-            if($iscoach == true) {
-                $coach = new Coach;
-                $Lemanager->addCoach($coach, $user);
-            } else {
-                $client = new Client;
-                $Lemanager->addClient($client, $user);
+            $Userrepository = $this->getDoctrine()->getRepository(User::class);
+            $username = $form->get('username')->getData();
+        if ($Userrepository->findOneBy(['username' => $username])) { // you need to pick a field that determines how you will search for the user via the repository
+            $form->addError(new FormError('Username existant !'));
+        }else{
+                $Lemanager->addUser($user, $encoder, $ConfirmMail);
+                // $Lemanager->addConfirmMail($ConfirmMail, $user);
+                $iscoach = $form->get('Iscoach')->getData();
+                if($iscoach == true) {
+                    $coach = new Coach;
+                    $Lemanager->addCoach($coach, $user);
+                } else {
+                    $client = new Client;
+                    $Lemanager->addClient($client, $user);
+                }
+                
+                $Lemanager->editUserConf($user, $ConfirmMail);
+                $message = (new \Swift_Message('My_eCoach - Confirmez votre mail !'))
+                            ->setFrom('myecoach@service.com')
+                            ->setTo($user->getEmail())
+                            ->setBody($ConfirmMail->getToken()
+                            )
+                        ;
+                $mailer->send($message);
+                
+                return $this->redirectToRoute('security_login');
             }
-            
-            $Lemanager->editUserConf($user, $ConfirmMail);
-            $message = (new \Swift_Message('My_eCoach - Confirmez votre mail !'))
-                        ->setFrom('myecoach@service.com')
-                        ->setTo($user->getEmail())
-                        ->setBody($ConfirmMail->getToken()
-                        )
-                    ;
-            $mailer->send($message);
-            
-            return $this->redirectToRoute('security_login');
         }
 
         return $this->render('security/registration.html.twig', [
@@ -330,11 +337,11 @@ class SecurityController extends AbstractController
         $Clientrepository = $this->getDoctrine()->getRepository(Client::class);
 
         if ($user->getIscoach() == 1){
-            $coach = $Coachrepository->findOneBy(['User' => $user]);
+            $coach = $Coachrepository->findBy(['User' => $user]);
             $client = $Clientrepository->findBy(['coach' => $coach]);
         } else {
-            $client = $Clientrepository->findOneBy(['User' => $user]);
-            $coach = $Coachrepository->findOneBy(['Clients' => $client]);
+            $client = $Clientrepository->findBy(['User' => $user]);
+            $coach = $Coachrepository->findBy(['Clients' => $client]);
         }
 
         $this->denyAccessUnlessGranted('VIEW', $user);
