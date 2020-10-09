@@ -42,28 +42,27 @@ ConversationRepository $conversationRepository)
     }
 
     /**
-     * @Route("/", name="newConversations", methods={"POST"})
+     * @Route("/{id}", name="newConversations", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      * @throws \Exception
      */
-    public function index(Request $request)
+    public function new_conv(Request $request, int $id)
     {
-        $otherUser = $request->get('otherUser', 0);
-        $otherUser = $this->userRepository->find($otherUser);
+        $otherUser = $this->userRepository->findById($id);
 
         if (is_null($otherUser)) {
             throw new \Exception("The user was not found");
         }
 
         // Impossible de créer une conversation avec soi-même
-        if ($otherUser->getId() === $this->getUser()->getId()) {
+        if ($otherUser[0]->getId() === $this->getUser()->getId()) {
             throw new \Exception("That's deep but you cannot create a conversation with yourself");
         }
 
         // Vérifiez si la conv existe déjà
         $conversation = $this->conversationRepository->findConversationByParticipants(
-            $otherUser->getId(),
+            $otherUser[0]->getId(),
             $this->getUser()->getId()
         );
 
@@ -79,7 +78,7 @@ ConversationRepository $conversationRepository)
 
 
         $otherParticipant = new Participant();
-        $otherParticipant->setUser($otherUser);
+        $otherParticipant->setUser($otherUser[0]);
         $otherParticipant->setConversation($conversation);
 
         $this->entityManager->getConnection()->beginTransaction();
@@ -102,7 +101,6 @@ ConversationRepository $conversationRepository)
         ], Response::HTTP_CREATED, [], []);
     }
 
-
     /**
      * @Route("/", name="getConversations", methods={"GET"})
      * @param Request $request
@@ -110,11 +108,12 @@ ConversationRepository $conversationRepository)
      */
     public function getConvs(Request $request) {
         $conversations = $this->conversationRepository->findConversationsByUser($this->getUser()->getId());
-
         $hubUrl = $this->getParameter('mercure.default_hub');
 
         $this->addLink($request, new Link('mercure', $hubUrl));
-        return $this->json([$conversations]);
+        $json_conv = $this->json([$conversations]);
+
+        return $json_conv;
     }
 
 }

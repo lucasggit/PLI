@@ -8,7 +8,7 @@
 
       <div class="messages-box">
         <div class="list-group rounded-0">
-          <template v-for="index in CONVERSATIONS.length + 1">
+          <template v-for="index in CONVERSATIONS[0].length">
               <Conversation :conversation="CONVERSATIONS[0][index - 1]" />
           </template>
         </div>
