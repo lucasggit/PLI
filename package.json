@@ -100,7 +100,7 @@
     "once": "^1.4.0",
     "package-json": "^6.5.0",
     "minimist": "^1.2.5",
-    "postcss": "^7.0.35",
+    "postcss": "^8.2.10",
     "prepend-http": "^2.0.0",
     "postcss-selector-parser": "^6.0.4",
     "prettier": "^1.19.1",
