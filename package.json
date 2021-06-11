@@ -93,7 +93,7 @@
     "ms": "^2.1.2",
     "normalize-path": "^3.0.0",
     "mimic-response": "^1.0.1",
-    "normalize-url": "^4.5.0",
+    "normalize-url": "^4.5.1",
     "npm-watch": "^0.7.0",
     "p-cancelable": "^1.1.0",
     "picomatch": "^2.2.2",
